@@ -1,0 +1,56 @@
+{
+  "name": "ngx-quiz-api",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Server side for ngx-quiz",
+  "main": "server.js",
+  "scripts": {
+    "postinstall": "npm run build",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "watch": "npm run build && tsc -w",
+    "lint": "tslint -c tslint.json --project tsconfig.json",
+    "lint-fix": "tslint --fix -c tslint.json --project tsconfig.json",
+    "test": "npm run lint",
+    "dev": "ts-node-dev src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmstss/ngx-quiz-api.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "mongoose",
+    "mongodb",
+    "api"
+  ],
+  "author": "Viachaslau Tyshkavets",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pmstss/ngx-quiz-api/issues"
+  },
+  "homepage": "https://github.com/pmstss/ngx-quiz-api#readme",
+  "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/cors": "^2.8.4",
+    "@types/express": "^4.11.0",
+    "@types/jsonwebtoken": "^8.3.0",
+    "@types/mongoose": "^5.3.7",
+    "@types/morgan": "^1.7.35",
+    "@types/node": "^9.6.39",
+    "bcrypt": "3.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.2",
+    "morgan": "^1.9.1",
+    "tslint": "^5.9.1",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^1.0.0-pre.30"
+  }
+}

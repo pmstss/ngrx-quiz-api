@@ -1,0 +1,13 @@
+{
+    "extends": "tslint-config-airbnb",
+    "rules": {
+        "ter-indent": [true, 4],
+        "trailing-comma": [false],
+        "no-increment-decrement": [false]
+    },
+    "linterOptions": {
+        "exclude": [
+            "node_modules/**"
+        ]
+    }
+}
