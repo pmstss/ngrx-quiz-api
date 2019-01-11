@@ -1,8 +1,6 @@
 import * as mongoose from 'mongoose';
 
 export interface QuizItemChoice {
-    _id?: string;
-    id?: string;
     counter: number;
     text: string;
     explanation: string;

@@ -2,8 +2,14 @@ import * as mongoose from 'mongoose';
 import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice';
 import { QuizModel, QuizSchema } from './quiz';
 
-export interface QuizItem {
-    id: string;
+export interface QuizItemUpdate {
+    question: string;
+    choices: QuizItemChoice[];
+    randomizeChoices: boolean;
+    singleChoice: boolean;
+}
+
+export class QuizItem implements QuizItemUpdate {
     quizId: mongoose.Types.ObjectId;
     question: string;
     choices: QuizItemChoice[];

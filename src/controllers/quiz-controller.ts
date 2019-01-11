@@ -174,17 +174,18 @@ export class QuizController {
                 return res.status(404).json({ success: false, message: 'Item not found' });
             }
 
-            const choices: QuizItemChoice[] = (<QuizItem><any>doc).choices;
+            const choices: (QuizItemChoice & {_id: string})[] = (<any>doc).choices;
             const totalAnswers = choices.reduce((sum, choice) => sum + choice.counter, 0);
             const correctAnswer = choices.filter(ch => ch.correct).map(ch => ch._id)
                 .sort().join(' ') === userChoiceIds.sort().join(' ');
 
-            const choicesResult = (<any>doc).choices.map((choice: QuizItemChoice) => ({
-                id: choice._id,
-                explanation: choice.explanation,
-                correct: choice.correct,
-                popularity: choice.counter / totalAnswers
-            }));
+            const choicesResult = (<any>doc).choices
+                .map((choice: QuizItemChoice & { _id: string }) => ({
+                    id: choice._id,
+                    explanation: choice.explanation,
+                    correct: choice.correct,
+                    popularity: choice.counter / totalAnswers
+                }));
             // TODO ### store answer in token
 
             res.json({
