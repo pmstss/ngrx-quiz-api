@@ -12,6 +12,8 @@
     "lint": "tslint -c tslint.json --project tsconfig.json",
     "lint-fix": "tslint --fix -c tslint.json --project tsconfig.json",
     "test": "mocha -r ts-node/register spec/**/*.ts",
+    "oatts": "oatts generate -s ./swagger/swagger.json -w ./out-tests --host localhost:3333",
+    "oatts-test": "mocha out-tests",
     "dev": "ts-node-dev src/server.ts"
   },
   "repository": {

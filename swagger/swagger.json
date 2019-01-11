@@ -1,0 +1,267 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "ngrx-quiz-api",
+    "version" : "0.2",
+    "title" : "ngrx-quiz-api"
+  },
+  "paths" : {
+    "/api/quizes" : {
+      "get" : {
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Quiz list response",
+            "schema" : {
+              "$ref" : "#/definitions/QuizListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/quizes/ng2" : {
+      "get" : {
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Quiz meta response",
+            "schema" : {
+              "$ref" : "#/definitions/QuizResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/items/df626eaeea19e30d361bbccc" : {
+      "get" : {
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Quiz item response",
+            "schema" : {
+              "$ref" : "#/definitions/QuizItemResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/answers/df626eaeea19e30d361bbccc" : {
+      "post" : {
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/AnswerRequest"
+          },
+          "x-examples" : {
+            "application/json" : "{\"choiceIds\": []}"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Submit answer response",
+            "schema" : {
+              "$ref" : "#/definitions/AnswerResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "QuizListResponse" : {
+      "type" : "object",
+      "required" : [ "data", "success" ],
+      "properties" : {
+        "success" : {
+          "type" : "boolean"
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/QuizMeta"
+          }
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizResponse" : {
+      "type" : "object",
+      "required" : [ "data", "success" ],
+      "properties" : {
+        "success" : {
+          "type" : "boolean"
+        },
+        "data" : {
+          "$ref" : "#/definitions/QuizMetaWithItemIds"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizItemResponse" : {
+      "type" : "object",
+      "required" : [ "data", "success" ],
+      "properties" : {
+        "success" : {
+          "type" : "boolean"
+        },
+        "data" : {
+          "$ref" : "#/definitions/QuizItem"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "AnswerRequest" : {
+      "type" : "object",
+      "required" : [ "choiceIds" ],
+      "properties" : {
+        "choiceIds" : {
+          "type" : "array"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "AnswerResponse" : {
+      "type" : "object",
+      "required" : [ "data", "success" ],
+      "properties" : {
+        "success" : {
+          "type" : "boolean"
+        },
+        "data" : {
+          "$ref" : "#/definitions/QuizItemAnswer"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "ItemId" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizMeta" : {
+      "type" : "object",
+      "required" : [ "description", "descriptionFull", "id", "name", "randomizeItems", "shortName", "timeLimit" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "shortName" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "descriptionFull" : {
+          "type" : "string"
+        },
+        "timeLimit" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "randomizeItems" : {
+          "type" : "boolean"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizMetaWithItemIds" : {
+      "allOf" : [ {
+        "$ref" : "#/definitions/QuizMeta"
+      }, {
+        "type" : "object"
+      } ]
+    },
+    "QuizItem" : {
+      "type" : "object",
+      "required" : [ "choices", "id", "question", "quizId", "randomizeChoices", "singleChoice" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "quizId" : {
+          "type" : "string"
+        },
+        "question" : {
+          "type" : "string"
+        },
+        "choices" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/QuizItemChoice"
+          }
+        },
+        "randomizeChoices" : {
+          "type" : "boolean"
+        },
+        "singleChoice" : {
+          "type" : "boolean"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizItemChoice" : {
+      "type" : "object",
+      "required" : [ "id", "text" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "text" : {
+          "type" : "string"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizItemAnswer" : {
+      "type" : "object",
+      "required" : [ "choices", "correct" ],
+      "properties" : {
+        "choices" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/QuizItemChoiceAnswer"
+          }
+        },
+        "correct" : {
+          "type" : "boolean"
+        }
+      },
+      "additionalProperties" : { }
+    },
+    "QuizItemChoiceAnswer" : {
+      "type" : "object",
+      "required" : [ "correct", "explanation", "id", "popularity" ],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "explanation" : {
+          "type" : "string"
+        },
+        "correct" : {
+          "type" : "boolean"
+        },
+        "popularity" : {
+          "type" : "number",
+          "format" : "integer"
+        }
+      },
+      "additionalProperties" : { }
+    }
+  }
+}
