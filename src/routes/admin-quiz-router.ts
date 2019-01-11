@@ -1,31 +1,12 @@
 import { Router } from 'express';
 import { AdminQuizController } from '../controllers/admin-quiz-controller';
 
-const adminQuizController = new AdminQuizController();
+const controller = new AdminQuizController();
 
 export const adminQuizRouter = Router();
 
-adminQuizRouter.get(
-    '/quizes/:quizId',
-    adminQuizController.getQuiz.bind(adminQuizController)
-);
-
-adminQuizRouter.get(
-    '/items/:itemId',
-    adminQuizController.getItem.bind(adminQuizController)
-);
-
-adminQuizRouter.post(
-    '/items?quizId=:quizId',
-    adminQuizController.createItem.bind(adminQuizController)
-);
-
-adminQuizRouter.put(
-    '/items/:itemId',
-    adminQuizController.updateItem.bind(adminQuizController)
-);
-
-adminQuizRouter.post(
-    '/items/:itemId/choices',
-    adminQuizController.createChoice.bind(adminQuizController)
-);
+adminQuizRouter.get('/quizes/:quizId', controller.getQuiz.bind(controller));
+adminQuizRouter.get('/items/:itemId', controller.getItem.bind(controller));
+adminQuizRouter.post('/items?quizId=:quizId', controller.createItem.bind(controller));
+adminQuizRouter.put('/items/:itemId', controller.updateItem.bind(controller));
+adminQuizRouter.post('/items/:itemId/choices', controller.createChoice.bind(controller));

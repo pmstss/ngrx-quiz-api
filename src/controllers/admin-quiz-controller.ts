@@ -128,17 +128,4 @@ export class AdminQuizController {
             }
         ).exec(execCallback(res, next));
     }
-
-    refreshIds(req: Request, res: Response, next: NextFunction) {
-        return QuizItemModel.findById(req.params.itemId).exec((err, item) => {
-            const saves = item.get('choices').map((ch: mongoose.Document) => {
-                ch.set('_id', new mongoose.Types.ObjectId());
-                return ch.save();
-            });
-
-            return Promise.all(saves)
-                .then(() => item.save())
-                .then(saveRes => res.json(saveRes));
-        });
-    }
 }

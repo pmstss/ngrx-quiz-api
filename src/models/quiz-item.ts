@@ -3,12 +3,13 @@ import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice';
 import { QuizModel, QuizSchema } from './quiz';
 
 export interface QuizItem {
-    id?: string;
+    id: string;
     quizId: mongoose.Types.ObjectId;
     question: string;
     choices: QuizItemChoice[];
     randomizeChoices: boolean;
     singleChoice: boolean;
+    counter: number;
 }
 
 // tslint:disable-next-line variable-name

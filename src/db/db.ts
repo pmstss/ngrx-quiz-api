@@ -13,4 +13,7 @@ mongoose.connection.on('disconnected', () => {
     console.log('Mongoose disconnected');
 });
 
-export const dbConnect = () => mongoose.connect('mongodb://localhost:27017/quiz-api');
+export const dbConnect = () => mongoose.connect(
+    'mongodb://localhost:27017/quiz-api',
+    { useNewUrlParser: true }
+);

@@ -1,13 +1,10 @@
 import { Router } from 'express';
 import { QuizController } from '../controllers/quiz-controller';
 
-const quizController = new QuizController();
+const controller = new QuizController();
 
 export const quizRouter = Router();
-quizRouter.get('/quizes', quizController.getQuizList.bind(quizController));
-quizRouter.get('/quizes/:shortName', quizController.getQuiz.bind(quizController));
-quizRouter.get('/items/:itemId', quizController.getItem.bind(quizController));
-quizRouter.post('/answers/:itemId', quizController.submitAnswer.bind(quizController));
-
-// TODO ###
-quizRouter.get('/refresh-ids', quizController.refreshItemIds.bind(quizController));
+quizRouter.get('/quizes', controller.getQuizList.bind(controller));
+quizRouter.get('/quizes/:shortName', controller.getQuiz.bind(controller));
+quizRouter.get('/items/:itemId', controller.getItem.bind(controller));
+quizRouter.post('/answers/:itemId', controller.submitAnswer.bind(controller));

@@ -30,6 +30,18 @@ const execCallback = (res: Response, next: NextFunction) => ((err: any, docs: an
 });
 
 export class QuizController {
+    getQuizList(req: Request, res: Response, next: NextFunction) {
+        return QuizModel
+            .aggregate()
+            .addFields({
+                id: '$_id'
+            })
+            .project({
+                _id: 0
+            })
+            .exec(execCallback(res, next));
+    }
+
     getQuiz(req: Request, res: Response, next: NextFunction) {
         return QuizModel
             .aggregate()
@@ -59,24 +71,12 @@ export class QuizController {
                         }
                     }
                 },
-                id: '$_id',
-            })
-            .project({
-                _id: 0
-            })
-            .exec(execSingleCallback(res, next));
-    }
-
-    getQuizList(req: Request, res: Response, next: NextFunction) {
-        return QuizModel
-            .aggregate()
-            .addFields({
                 id: '$_id'
             })
             .project({
                 _id: 0
             })
-            .exec(execCallback(res, next));
+            .exec(execSingleCallback(res, next));
     }
 
     getItem(req: Request, res: Response, next: NextFunction) {
