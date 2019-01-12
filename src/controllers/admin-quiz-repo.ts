@@ -30,7 +30,8 @@ export class AdminQuizRepo {
                         in: {
                             id: '$$x._id',
                             choices: '$$x.choices',
-                            question: '$$x.question'
+                            question: '$$x.question',
+                            singleChoice: '$$x.singleChoice'
                         }
                     }
                 },
