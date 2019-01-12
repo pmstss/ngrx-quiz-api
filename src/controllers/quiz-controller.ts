@@ -33,12 +33,20 @@ export class QuizController {
     getQuizList(req: Request, res: Response, next: NextFunction) {
         return QuizModel
             .aggregate()
+            .lookup({
+                from: 'items',
+                localField: '_id',
+                foreignField: 'quizId',
+                as: 'items'
+            })
             .addFields({
-                id: '$_id'
+                id: '$_id',
+                totalQuestions: { $size: '$items' }
             })
             .project({
                 _id: 0,
-                __v: 0
+                __v: 0,
+                items: 0
             })
             .exec(execCallback(res, next));
     }
