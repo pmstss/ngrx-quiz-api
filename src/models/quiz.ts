@@ -7,8 +7,8 @@ export interface Quiz {
     shortName: string;
     description: string;
     descriptionFull: string;
-    timeLimit: number;
-    randomizeQuestions: boolean;
+    timeLimit?: number;
+    randomizeItems: boolean;
     items: QuizItem[];
 }
 
@@ -42,7 +42,7 @@ export const QuizSchema = new mongoose.Schema(
             type: mongoose.SchemaTypes.Number,
             required: true
         },
-        randomizeQuestions: {
+        randomizeItems: {
             type: mongoose.SchemaTypes.Boolean,
             required: true
         }

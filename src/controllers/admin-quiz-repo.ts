@@ -37,7 +37,8 @@ export class AdminQuizRepo {
                 id: '$_id',
             })
             .project({
-                _id: 0
+                _id: 0,
+                __v: 0
             })
             .exec()
             .then((docs: mongoose.Document[]) => docs[0]);
@@ -50,12 +51,9 @@ export class AdminQuizRepo {
             description: quiz.name,
             descriptionFull: quiz.name,
             timeLimit: quiz.timeLimit,
-            randomizeQuestions: quiz.randomizeQuestions,
+            randomizeItems: quiz.randomizeItems,
             items: []
-        }).then((doc) => {
-            console.log('### created quiz: %o', doc);
-            return this.getQuiz(doc.get('_id'));
-        });
+        }).then(doc => this.getQuiz(doc.get('_id')));
     }
 
     deleteQuiz(quizId: string) {
@@ -78,13 +76,15 @@ export class AdminQuizRepo {
                     description: quiz.description,
                     descriptionFull: quiz.descriptionFull,
                     timeLimit: quiz.timeLimit,
-                    randomizeQuestions: quiz.randomizeQuestions,
+                    randomizeItems: quiz.randomizeItems
                 }
             },
             {
+                // there is return new flag, but no way to adjust fields ($addFields, $project)?
                 new: true
             }
-        ).exec();
+        ).exec()
+        .then(() => this.getQuiz(quizId));
     }
 
     getItem(itemId: string) {
@@ -97,9 +97,11 @@ export class AdminQuizRepo {
                 id: '$_id'
             })
             .project({
-                _id: 0
+                _id: 0,
+                __v: 0
             })
-            .exec();
+            .exec()
+            .then((docs: mongoose.Document[]) => docs[0]);
     }
 
     createItem(quizId: string, item: QuizItem) {
@@ -110,7 +112,7 @@ export class AdminQuizRepo {
             singleChoice: item.singleChoice,
             randomizeChoices: item.randomizeChoices,
             counter: 0
-        });
+        }).then(doc => this.getItem(doc.get('_id')));
     }
 
     updateItem(itemId: string, item: QuizItem) {
@@ -129,35 +131,13 @@ export class AdminQuizRepo {
             {
                 new: true
             }
-        ).exec();
+        ).exec().then(() => this.getItem(itemId));
     }
 
     deleteItem(itemId: string) {
         return QuizItemModel.findOneAndRemove(
             {
                 _id: mongoose.Types.ObjectId(itemId)
-            }
-        ).exec();
-    }
-
-    // TODO ### must be not used
-    createChoice(itemId: string, choice: QuizItemChoice) {
-        return QuizItemModel.findOneAndUpdate(
-            {
-                _id: mongoose.Types.ObjectId(itemId)
-            },
-            {
-                $push: {
-                    choices: {
-                        text: choice.text,
-                        explanation: choice.explanation,
-                        correct: choice.correct,
-                        counter: 0
-                    }
-                }
-            },
-            {
-                new: true
             }
         ).exec();
     }

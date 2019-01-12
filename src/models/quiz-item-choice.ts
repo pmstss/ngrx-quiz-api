@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 export interface QuizItemChoice {
     counter: number;
     text: string;
-    explanation: string;
+    explanation?: string;
     correct: boolean;
 }
 
@@ -17,7 +17,7 @@ export const QuizItemChoiceSchema = new mongoose.Schema({
     },
     explanation: {
         type: mongoose.Schema.Types.String,
-        required: true,
+        required: false,
         trim: true
     },
     correct: {

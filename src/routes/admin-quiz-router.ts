@@ -12,9 +12,6 @@ adminQuizRouter.put('/quizes/:quizId', controller.updateQuiz.bind(controller));
 adminQuizRouter.delete('/quizes/:quizId', controller.deleteQuiz.bind(controller));
 
 adminQuizRouter.get('/items/:itemId', controller.getItem.bind(controller));
-adminQuizRouter.post('/items?quizId=:quizId', controller.createItem.bind(controller));
+adminQuizRouter.post('/items', controller.createItem.bind(controller));
 adminQuizRouter.put('/items/:itemId', controller.updateItem.bind(controller));
 adminQuizRouter.delete('/items/:itemId', controller.deleteItem.bind(controller));
-
-// TODO ### remove?
-adminQuizRouter.post('/items/:itemId/choices', controller.createChoice.bind(controller));

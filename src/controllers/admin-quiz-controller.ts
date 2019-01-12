@@ -32,13 +32,13 @@ export class AdminQuizController {
     }
 
     getItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.createQuiz(req.params.itemId)
+        return this.repo.getItem(req.params.itemId)
             .then(writeSuccessCallback(res))
             .catch((err: any) => next(err));
     }
 
     createItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.createItem(req.params.quizId, req.body)
+        return this.repo.createItem(req.query.quizId, req.body)
             .then(writeSuccessCallback(res))
             .catch((err: any) => next(err));
     }
@@ -51,13 +51,6 @@ export class AdminQuizController {
 
     deleteItem(req: Request, res: Response, next: NextFunction) {
         return this.repo.deleteItem(req.params.itemId)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
-    }
-
-    // TODO ### will be part of item CRUD?
-    createChoice(req: Request, res: Response, next: NextFunction) {
-        return this.repo.createChoice(req.params.itemId, req.body)
             .then(writeSuccessCallback(res))
             .catch((err: any) => next(err));
     }
