@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice';
-import { QuizModel, QuizSchema } from './quiz';
 
 export interface QuizItemUpdate {
     question: string;
@@ -15,6 +14,7 @@ export class QuizItem implements QuizItemUpdate {
     choices: QuizItemChoice[];
     randomizeChoices: boolean;
     singleChoice: boolean;
+    order: number;
     counter: number;
 }
 
@@ -39,6 +39,12 @@ export const QuizItemSchema = new mongoose.Schema(
             required: true
         },
         choices: [QuizItemChoiceSchema],
+        order: {
+            type: mongoose.Schema.Types.Number,
+            required: true,
+            default: 0,
+            select: false
+        },
         counter: {
             type: mongoose.Schema.Types.Number,
             required: true,

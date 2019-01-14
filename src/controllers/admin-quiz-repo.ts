@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 import { QuizModel, Quiz } from '../models/quiz';
 import { QuizItemModel, QuizItem, QuizItemUpdate } from '../models/quiz-item';
-import { QuizItemChoice } from '../models/quiz-item-choice';
 
 export class AdminQuizRepo {
     getQuiz(quizId: string): Promise<mongoose.Document> {
@@ -31,18 +30,30 @@ export class AdminQuizRepo {
                             id: '$$x._id',
                             choices: '$$x.choices',
                             question: '$$x.question',
-                            singleChoice: '$$x.singleChoice'
+                            singleChoice: '$$x.singleChoice',
+                            order: '$$x.order'
                         }
                     }
                 },
                 id: '$_id',
             })
+            /*.unwind('$items')
+            .sort({ 'items.order': -1 })
+            .group({
+                _id: '$_id',
+                items: {
+                    $push: '$items'
+                }
+            })*/
             .project({
                 _id: 0,
                 __v: 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => docs[0]);
+            .then((docs: mongoose.Document[]) => {
+                (<any>docs[0]).items.sort((i1: any, i2: any) => i1.order - i2.order);
+                return docs[0];
+            });
     }
 
     createQuiz(quiz: Quiz) {
@@ -79,13 +90,25 @@ export class AdminQuizRepo {
                     timeLimit: quiz.timeLimit,
                     randomizeItems: quiz.randomizeItems
                 }
-            },
-            {
-                // there is return new flag, but no way to adjust fields ($addFields, $project)?
-                new: true
             }
         ).exec()
         .then(() => this.getQuiz(quizId));
+    }
+
+    updateQuizItemsOrder(quizId: string, itemIds: string[]) {
+        // TODO ### is it possible to perform in single query?
+        return Promise.all(itemIds.map((itemId, idx) => {
+            return QuizItemModel.update(
+                {
+                    _id: mongoose.Types.ObjectId(itemId),
+                },
+                {
+                    $set: {
+                        order: idx
+                    }
+                }
+            ).exec();
+        }));
     }
 
     getItem(itemId: string) {

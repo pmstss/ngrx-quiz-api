@@ -25,6 +25,12 @@ export class AdminQuizController {
             .catch((err: any) => next(err));
     }
 
+    updateQuizItemsOrder(req: Request, res: Response, next: NextFunction) {
+        return this.repo.updateQuizItemsOrder(req.params.quizId, req.body.itemIds)
+            .then(writeSuccessCallback(res))
+            .catch((err: any) => next(err));
+    }
+
     deleteQuiz(req: Request, res: Response, next: NextFunction) {
         return this.repo.deleteQuiz(req.params.quizId)
             .then(writeSuccessCallback(res))
