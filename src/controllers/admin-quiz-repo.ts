@@ -21,6 +21,7 @@ export class AdminQuizRepo {
                 }],
                 as: 'items'
             })
+            // adding "id" instead of "_id" for items and their inner choices
             .addFields({
                 items: {
                     $map: {
@@ -50,15 +51,25 @@ export class AdminQuizRepo {
                 },
                 id: '$_id',
             })
-            // TODO ### sort with mongodb?
-            /*.unwind('$items')
-            .sort({ 'items.order': -1 })
+            // sorting be items order
+            .unwind('$items')
+            .sort({ 'items.order': 1 })
             .group({
                 _id: '$_id',
                 items: {
                     $push: '$items'
+                },
+                quizMeta: {
+                    $mergeObjects: '$$CURRENT',
                 }
-            })*/
+            })
+            .project({
+                'quizMeta.items': 0
+            })
+            .replaceRoot({
+                $mergeObjects: ['$quizMeta', { items: '$items' }]
+            })
+            // removing aux fields
             .project({
                 _id: 0,
                 __v: 0,
@@ -66,11 +77,7 @@ export class AdminQuizRepo {
                 'items.__v': 0,
                 'items.choices._id': 0
             })
-            .exec()
-            .then((docs: mongoose.Document[]) => {
-                (<any>docs[0]).items.sort((i1: any, i2: any) => i1.order - i2.order);
-                return docs[0];
-            });
+            .exec();
     }
 
     createQuiz(quiz: Quiz) {
