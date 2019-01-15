@@ -37,6 +37,7 @@ export class AdminQuizRepo {
                 },
                 id: '$_id',
             })
+            // TODO ### sort with mongodb?
             /*.unwind('$items')
             .sort({ 'items.order': -1 })
             .group({
@@ -118,11 +119,21 @@ export class AdminQuizRepo {
                 _id: mongoose.Types.ObjectId(itemId)
             })
             .addFields({
-                id: '$_id'
+                id: '$_id',
+                choices: {
+                    $map: {
+                        input: '$choices',
+                        as: 'x',
+                        in: {
+                            $mergeObjects: ['$$x', { id: '$$x._id' }]
+                        }
+                    }
+                }
             })
             .project({
                 _id: 0,
-                __v: 0
+                __v: 0,
+                'choices._id': 0
             })
             .exec()
             .then((docs: mongoose.Document[]) => docs[0]);
