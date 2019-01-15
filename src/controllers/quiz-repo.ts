@@ -59,7 +59,8 @@ export class QuizRepo {
                 _id: 0,
                 __v: 0
             })
-            .exec();
+            .exec()
+            .then((docs: mongoose.Document[]) => docs[0]);
     }
 
     getItem(itemId: string): Promise<any> {
@@ -86,7 +87,8 @@ export class QuizRepo {
                 __v: 0,
                 counter: 0
             })
-            .exec();
+            .exec()
+            .then((docs: mongoose.Document[]) => docs[0]);
     }
 
     submitAnswer(itemId: string, choiceIds: mongoose.Types.ObjectId[]): Promise<any> {
