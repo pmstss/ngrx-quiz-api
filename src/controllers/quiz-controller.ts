@@ -116,38 +116,6 @@ export class QuizController {
             .exec(execSingleCallback(res, next));
     }
 
-    createItem(req: Request, res: Response, next: NextFunction) {
-        return QuizItemModel.create(<QuizItem>{
-            quizId: mongoose.Types.ObjectId(req.params.quizId),
-            question: req.body.question || 'My Question',
-            choices: req.body.choices ||
-                [{ text: 'asdasdasd', correct: false, explanation: 'Dummy', counter: 42 }],
-            randomizeChoices: !!req.body.randomizeChoices,
-            singleChoice: !!req.body.singleChoice
-        }).then(doc => res.json(doc), err => next(err));
-    }
-
-    createChoice(req: Request, res: Response, next: NextFunction) {
-        return QuizItemModel.findOneAndUpdate(
-            {
-                _id: mongoose.Types.ObjectId(req.params.itemId)
-            },
-            {
-                $push: {
-                    choices: <QuizItemChoice>{
-                        text: req.body.text || 'Choice X',
-                        explanation: req.body.explanation || 'Explain',
-                        correct: !!req.body.correct,
-                        counter: 0
-                    }
-                }
-            },
-            {
-                new: true
-            }
-        ).exec(execCallback(res, next));
-    }
-
     submitAnswer(req: Request, res: Response, next: NextFunction) {
         const userChoiceIds = req.body.choiceIds ||
             ['5c337b84f246001bd80175b3', '5c337c08c380cd3164e64591', '5c337d5adc664932e81cee3e'];
