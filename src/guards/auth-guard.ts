@@ -8,13 +8,12 @@ export const authGuard = (req: Request, res: Response, next: NextFunction) => {
         (err: jwt.VerifyErrors, decoded: {[key: string]: any}) => {
             if (err) {
                 res.json({
-                    status: 'error',
-                    message: err.message,
-                    data: null
+                    success: false,
+                    tokenError: true,
+                    message: err.message
                 });
             } else {
-                // add user id to request
-                req.body.userId = decoded.id;
+                req.body.tokenData = decoded;
                 next();
             }
         }

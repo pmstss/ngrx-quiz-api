@@ -1,3 +1,4 @@
+import * as mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { UserModel, User } from '../models/user';
 import { NextFunction } from 'connect';
@@ -9,7 +10,11 @@ export class AuthController {
         console.log('### sec: %o, id: %o', req.app.get('secretKey'), user._id);
         return sign(
             {
-                id: user._id
+                user: {
+                    id: user._id,
+                    fullName: user.fullName,
+                    email: user.email
+                }
             },
             req.app.get('secretKey'),
             {
@@ -26,14 +31,12 @@ export class AuthController {
                 if (user && compareSync(req.body.password, user.password)) {
                     res.json({
                         success: true,
-                        token: AuthController.createToken(req, user),
-                        data: user
+                        token: AuthController.createToken(req, user)
                     });
                 } else {
-                    res.json({
+                    res.status(401).json({
                         success: false,
-                        message: 'Invalid credentials',
-                        data: null
+                        message: 'Invalid credentials'
                     });
                 }
             }
@@ -66,25 +69,28 @@ export class AuthController {
         );
     }
 
+// TODO ### REMOVE temp implementation!
     resetPass(req: Request, res: Response, next: NextFunction) {
-        return UserModel.findOne({ email: req.body.email }, (err: any, user: User) => {
-            if (err) {
-                next(err);
-            } else {
-                // TODO ### temp!
+        return UserModel.findOne(
+            {
+                email: req.body.email
+            })
+            .then((user: mongoose.Document) => {
                 if (user) {
-                    res.json({
-                        success: true,
-                        data: user
-                    });
-                } else {
-                    res.json({
-                        success: false,
-                        message: 'No such user',
-                        data: null
+                    user.set('password', '12345');
+                    return user.save().then(() => {
+                        res.json({
+                            success: true,
+                            data: user
+                        });
                     });
                 }
-            }
-        });
+
+                res.status(404).json({
+                    success: false,
+                    message: 'No such user'
+                });
+            })
+            .catch((err: any) => next(err));
     }
 }
