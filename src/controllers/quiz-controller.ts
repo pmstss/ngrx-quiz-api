@@ -96,21 +96,24 @@ export class QuizController {
                 _id: mongoose.Types.ObjectId(req.params.itemId)
             })
             .addFields({
-                id: '$_id'
+                id: '$_id',
+                choices: {
+                    $map: {
+                        input: '$choices',
+                        as: 'x',
+                        in: {
+                            id: '$$x._id',
+                            text: '$$x.text'
+                        }
+                    }
+                }
             })
             .project({
                 _id: 0,
                 __v: 0,
-                counter: 0,
-                'choices.correct': 0,
-                'choices.explanation': 0,
-                'choices.counter': 0
+                counter: 0
             })
-            // TODO ### is it possible to map _id => id for subdocs too to avoid postprocessing?
-            .exec(execSingleCallback(res, next, quizItem => ({
-                ...quizItem,
-                choices: quizItem.choices.map((ch: any) => ({ text: ch.text, id: ch._id }))
-            })));
+            .exec(execSingleCallback(res, next));
     }
 
     createItem(req: Request, res: Response, next: NextFunction) {
