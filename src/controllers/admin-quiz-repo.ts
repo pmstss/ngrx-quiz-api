@@ -27,11 +27,24 @@ export class AdminQuizRepo {
                         input: '$items',
                         as: 'x',
                         in: {
-                            id: '$$x._id',
-                            choices: '$$x.choices',
-                            question: '$$x.question',
-                            singleChoice: '$$x.singleChoice',
-                            order: '$$x.order'
+                            $mergeObjects: [
+                                '$$x',
+                                {
+                                    id: '$$x._id',
+                                    choices: {
+                                        $map: {
+                                            input: '$$x.choices',
+                                            as: 'y',
+                                            in: {
+                                                $mergeObjects: [
+                                                    '$$y',
+                                                    { id: '$$y._id' }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 },
@@ -48,7 +61,10 @@ export class AdminQuizRepo {
             })*/
             .project({
                 _id: 0,
-                __v: 0
+                __v: 0,
+                'items._id': 0,
+                'items.__v': 0,
+                'items.choices._id': 0
             })
             .exec()
             .then((docs: mongoose.Document[]) => {
