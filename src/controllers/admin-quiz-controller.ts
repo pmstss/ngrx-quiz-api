@@ -1,63 +1,46 @@
 import { Request, Response } from 'express';
 import { NextFunction } from 'connect';
 import { AdminQuizRepo } from './admin-quiz-repo';
-import { writeSuccessCallback } from './utils';
+import { handleRepoResult } from './utils';
 
 export class AdminQuizController {
     constructor(private repo: AdminQuizRepo) {
     }
 
     getQuiz(req: Request, res: Response, next: NextFunction) {
-        return this.repo.getQuiz(req.params.quizId)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.getQuiz(req.params.quizId), res, next);
     }
 
     createQuiz(req: Request, res: Response, next: NextFunction) {
-        return this.repo.createQuiz(req.body)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.createQuiz(req.body), res, next);
     }
 
     updateQuiz(req: Request, res: Response, next: NextFunction) {
-        return this.repo.updateQuiz(req.params.quizId, req.body)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.updateQuiz(req.params.quizId, req.body), res, next);
     }
 
     updateQuizItemsOrder(req: Request, res: Response, next: NextFunction) {
-        return this.repo.updateQuizItemsOrder(req.params.quizId, req.body.itemIds)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(
+            this.repo.updateQuizItemsOrder(req.params.quizId, req.body.itemIds), res, next);
     }
 
     deleteQuiz(req: Request, res: Response, next: NextFunction) {
-        return this.repo.deleteQuiz(req.params.quizId)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.deleteQuiz(req.params.quizId), res, next);
     }
 
     getItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.getItem(req.params.itemId)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.getItem(req.params.itemId), res, next);
     }
 
     createItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.createItem(req.query.quizId, req.body)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.createItem(req.query.quizId, req.body), res, next);
     }
 
     updateItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.updateItem(req.params.itemId, req.body)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.updateItem(req.params.itemId, req.body), res, next);
     }
 
     deleteItem(req: Request, res: Response, next: NextFunction) {
-        return this.repo.deleteItem(req.params.itemId)
-            .then(writeSuccessCallback(res))
-            .catch((err: any) => next(err));
+        handleRepoResult(this.repo.deleteItem(req.params.itemId), res, next);
     }
 }
