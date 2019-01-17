@@ -6,7 +6,6 @@ import { RequestWithToken } from './request-with-token';
 import { writeErrorResponse } from '../api/response-writer';
 
 export const tokenGuard = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.headers);
     TokenService.verify(<string>req.headers['authorization'])
         .then((decoded: TokenData) => {
             (req as RequestWithToken).tokenService = new TokenService(decoded);
