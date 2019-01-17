@@ -11,7 +11,7 @@ export class AuthRepo {
                 email
             })
             .addFields({
-                id: '$._id'
+                id: '$_id'
             })
             .project({
                 _id: 0,
