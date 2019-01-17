@@ -11,7 +11,7 @@ export const writeRepoResponse = (repoResult: Promise<any>, req: RequestWithToke
             writeSuccessResponse(req, res, next, data);
         })
         .catch((err) => {
-            writeErrorResponse(res, next, err);
+            writeErrorResponse(res, next, err, 400);
         });
 };
 
@@ -35,7 +35,7 @@ export const writeSuccessResponse = (req: RequestWithToken, res: Response,
 
 export const writeErrorResponse = (res: Response, next: NextFunction,
                                    err: any, status?: number) => {
-    const statusCode = status || err instanceof ApiError ? (err as ApiError).status : 0;
+    const statusCode = status || (err instanceof ApiError ? (err as ApiError).status : 0);
     if (statusCode) {
         res.status(statusCode);
     }
@@ -49,5 +49,5 @@ export const writeErrorResponse = (res: Response, next: NextFunction,
         apiResponse.tokenError = true;
     }
 
-    res.json();
+    res.json(apiResponse);
 };
