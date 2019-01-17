@@ -8,7 +8,7 @@ export class TokenService {
     constructor(private tokenData: TokenData, private modified: boolean = false) {
     }
 
-    static createForUser(user: User) {
+    static createForUser(user: User): TokenService {
         return new TokenService(
             {
                 user: {
