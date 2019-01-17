@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { DB_URL } from '../consts/consts';
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', () => {
@@ -13,7 +14,4 @@ mongoose.connection.on('disconnected', () => {
     console.log('Mongoose disconnected');
 });
 
-export const dbConnect = () => mongoose.connect(
-    'mongodb://localhost:27017/quiz-api',
-    { useNewUrlParser: true }
-);
+export const dbConnect = () => mongoose.connect(DB_URL, { useNewUrlParser: true });

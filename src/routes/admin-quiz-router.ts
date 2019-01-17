@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AdminQuizController } from '../controllers/admin-quiz-controller';
-import { AdminQuizRepo } from '../controllers/admin-quiz-repo';
+import { AdminQuizRepo } from '../db/admin-quiz-repo';
 
 const controller = new AdminQuizController(new AdminQuizRepo());
 

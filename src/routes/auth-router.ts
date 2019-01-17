@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/auth-controller';
+import { AuthRepo } from '../db/auth-repo';
 
-const authController = new AuthController();
+const authController = new AuthController(new AuthRepo());
 
 export const authRouter = Router();
 authRouter.post('/login', authController.login.bind(authController));

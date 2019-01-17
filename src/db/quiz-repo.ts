@@ -91,7 +91,8 @@ export class QuizRepo {
             .then((docs: mongoose.Document[]) => docs[0]);
     }
 
-    submitAnswer(itemId: string, choiceIds: mongoose.Types.ObjectId[]): Promise<any> {
+    submitAnswer(itemId: string, choiceIds: string[]): Promise<any> {
+        const choiceObjectIds = choiceIds.map((id: string) => mongoose.Types.ObjectId(id));
         return QuizItemModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(itemId),
@@ -105,12 +106,19 @@ export class QuizRepo {
             <mongoose.ModelFindOneAndUpdateOptions><any>{
                 arrayFilters: [{
                     'element._id': {
-                        $in: choiceIds
+                        $in: choiceObjectIds
                     }
                 }],
                 multi: true,
                 new: true
             }
-        ).exec();
+        ).exec()
+        .then((doc: mongoose.Document) => {
+            (doc as any).choices.forEach((ch: any) => {
+                ch.id = ch._id;
+                delete ch._id;
+            });
+            return doc;
+        });
     }
 }

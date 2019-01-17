@@ -6,24 +6,20 @@ import * as cors from 'cors';
 import { quizRouter } from './routes/quiz-router';
 import { adminQuizRouter } from './routes/admin-quiz-router';
 import { authRouter } from './routes/auth-router';
-import { authGuard } from './guards/auth-guard';
+import { tokenGuard } from './token/token-guard';
 import { dbConnect } from './db/db';
 
 const app = express();
 
-app.set('secretKey', process.env.JWT_TOKEN || 'TODO_SECRET');
 app.set('json spaces', 4);
 app.use(cors());
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/auth', authRouter);
-app.use('/api/admin', /*authGuard,*/ adminQuizRouter);
-app.use('/api', /*authGuard,*/ quizRouter);
-
-// app.use('/', (req, res) => res.send('ngrx-quiz-api'));
+app.use('/api/admin', tokenGuard, adminQuizRouter);
+app.use('/api', tokenGuard, quizRouter);
 
 app.use((req: express.Request, res: express.Response) => {
     res.status(404).send('Not found');

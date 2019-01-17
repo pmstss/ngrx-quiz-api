@@ -5,9 +5,12 @@ import * as mongoose from 'mongoose';
 const saltRounds = 3;
 
 export interface User {
-    _id: string;
+    id: string;
     fullName: string;
     email: string;
+}
+
+export interface UserWithPassword extends User {
     password: string;
 }
 
