@@ -5,7 +5,6 @@ import { NextFunction } from 'connect';
 import { compareSync } from 'bcrypt';
 import { AuthRepo } from '../db/auth-repo';
 import { TokenUtils } from '../token/token-utils';
-import { ApiRequest } from '../api/api-request';
 import { writeResponse } from '../api/response-writer';
 import { ApiError } from '../api/api-error';
 import { TokenRepo } from '../db/token-repo';
@@ -14,7 +13,7 @@ import { TokenData } from '../token/token-data';
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
-    login(req: ApiRequest, res: Response, next: NextFunction) {
+    login(req: Request, res: Response, next: NextFunction) {
         writeResponse(
             this.repo.getUser(req.body.email).then((user: UserWithPassword) => {
                 if (user && compareSync(req.body.password, user.password)) {
@@ -29,17 +28,21 @@ export class AuthController {
         );
     }
 
-    logout(req: ApiRequest, res: Response, next: NextFunction) {
+    logout(req: Request, res: Response, next: NextFunction) {
         writeResponse(
             TokenUtils.verifyIgnoringExpiration(TokenUtils.parseFromRequest(req))
                 .then(tokenData =>
                     this.tokenRepo.removeUserToken(tokenData.user.id))
-                .then(() => null),
+                .then(() => null)
+                .catch(() => {
+                    console.warn('Invalid token for user');
+                    return null;
+                }),
             req, res, next
         );
     }
 
-    register(req: ApiRequest, res: Response, next: NextFunction) {
+    register(req: Request, res: Response, next: NextFunction) {
         writeResponse(
             this.repo.createUser({
                 id: null,
@@ -51,7 +54,7 @@ export class AuthController {
             req, res, next);
     }
 
-    refreshToken(req: ApiRequest, res: Response, next: NextFunction) {
+    refreshToken(req: Request, res: Response, next: NextFunction) {
         const token = req.body.token;
 
         writeResponse(
