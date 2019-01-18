@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
-import { RequestWithToken } from '../token/request-with-token';
+import { ApiRequest } from './api-request';
 import { ApiResponse } from './api-response';
 import { ApiError } from './api-error';
 
-export const writeRepoResponse = (repoResult: Promise<any>, req: RequestWithToken,
-                                  res: Response, next: NextFunction) => {
-    return repoResult
+export const writeResponse = (dataPromise: Promise<any>, req: ApiRequest,
+                              res: Response, next: NextFunction) => {
+    return dataPromise
         .then((data: any) => {
             writeSuccessResponse(req, res, next, data);
         })
@@ -15,27 +15,19 @@ export const writeRepoResponse = (repoResult: Promise<any>, req: RequestWithToke
         });
 };
 
-export const writeSuccessResponse = (req: RequestWithToken, res: Response,
-                                     next: NextFunction, data: any, resetToken = false) => {
+const writeSuccessResponse = (req: ApiRequest, res: Response,
+                              next: NextFunction, data: any) => {
     const apiResponse: ApiResponse = {
         data,
         success: true
     };
-
-    if (req.tokenService && req.tokenService.isModified()) {
-        apiResponse.token = req.tokenService.sign();
-    }
-
-    if (resetToken) {
-        apiResponse.token = null;
-    }
 
     res.json(apiResponse);
 };
 
 export const writeErrorResponse = (res: Response, next: NextFunction,
                                    err: any, status?: number) => {
-    const statusCode = status || (err instanceof ApiError ? (err as ApiError).status : 0);
+    const statusCode = status || err && err instanceof ApiError && (err as ApiError).status;
     if (statusCode) {
         res.status(statusCode);
     }
@@ -44,10 +36,6 @@ export const writeErrorResponse = (res: Response, next: NextFunction,
         success: false,
         message: err.message || err
     };
-
-    if (err && err.tokenError) {
-        apiResponse.tokenError = true;
-    }
 
     res.json(apiResponse);
 };
