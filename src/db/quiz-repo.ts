@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { QuizModel } from '../models/quiz';
 import { QuizItemModel } from '../models/quiz-item';
+import { ApiError } from '../api/api-error';
 
 export class QuizRepo {
     getQuizList(): Promise<any> {
@@ -60,7 +61,12 @@ export class QuizRepo {
                 __v: 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => docs[0]);
+            .then((docs: mongoose.Document[]) => {
+                if (docs.length) {
+                    return docs[0];
+                }
+                throw new ApiError('No such quiz', 404);
+            });
     }
 
     getItem(itemId: string): Promise<any> {
