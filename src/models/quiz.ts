@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItem, QuizItemSchema } from './quiz-item';
+import { QuizItem } from './quiz-item';
 
 export interface Quiz {
     id: string;
@@ -9,7 +9,8 @@ export interface Quiz {
     descriptionFull: string;
     timeLimit?: number;
     randomizeItems: boolean;
-    items: QuizItem[];
+    totalQuestions: number;
+    items?: QuizItem[];
 }
 
 // tslint:disable-next-line variable-name
