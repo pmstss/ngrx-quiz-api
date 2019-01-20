@@ -45,20 +45,22 @@ export class QuizRepo {
                 as: 'items'
             })
             .addFields({
-                items: {
+                itemIds: {
                     $map: {
                         input: '$items',
                         as: 'x',
-                        in: {
-                            id: '$$x._id'
-                        }
+                        in: '$$x._id'
                     }
                 },
-                id: '$_id'
+                id: '$_id',
+                totalQuestions: {
+                    $size: '$items'
+                }
             })
             .project({
                 _id: 0,
-                __v: 0
+                __v: 0,
+                items: 0
             })
             .exec()
             .then((docs: mongoose.Document[]) => {
