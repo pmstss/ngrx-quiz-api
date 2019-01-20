@@ -1,10 +1,10 @@
 import * as mongoose from 'mongoose';
-import { QuizModel } from '../models/quiz';
-import { QuizItemModel } from '../models/quiz-item';
+import { QuizModel, Quiz } from '../models/quiz';
+import { QuizItemModel, QuizItem } from '../models/quiz-item';
 import { ApiError } from '../api/api-error';
 
 export class QuizRepo {
-    getQuizList(): Promise<any> {
+    getQuizList(): Promise<Quiz[]> {
         return QuizModel
             .aggregate()
             .lookup({
@@ -25,7 +25,7 @@ export class QuizRepo {
             .exec();
     }
 
-    getQuiz(shortName: string): Promise<any> {
+    getQuiz(shortName: string): Promise<Quiz> {
         return QuizModel
             .aggregate()
             .match({
@@ -71,7 +71,7 @@ export class QuizRepo {
             });
     }
 
-    getItem(itemId: string): Promise<any> {
+    getItem(itemId: string): Promise<QuizItem> {
         return QuizItemModel
             .aggregate()
             .match({
@@ -96,14 +96,20 @@ export class QuizRepo {
                 counter: 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => docs[0]);
+            .then((docs: QuizItem[]) => {
+                if (docs.length) {
+                    return docs[0];
+                }
+                throw new ApiError('No such item', 404);
+            });
     }
 
-    submitAnswer(itemId: string, choiceIds: string[]): Promise<any> {
+    submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<any> {
         const choiceObjectIds = choiceIds.map((id: string) => mongoose.Types.ObjectId(id));
         return QuizItemModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(itemId),
+                quizId: mongoose.Types.ObjectId(quizId)
             },
             {
                 $inc: {
