@@ -14,4 +14,5 @@ mongoose.connection.on('disconnected', () => {
     console.log('Mongoose disconnected');
 });
 
-export const dbConnect = () => mongoose.connect(DB_URL, { useNewUrlParser: true });
+export const dbConnect = () => mongoose.connect(DB_URL, { useNewUrlParser: true })
+    .then(() => mongoose.connection);

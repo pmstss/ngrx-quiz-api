@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { sign, verify, VerifyErrors } from 'jsonwebtoken';
 import { User } from '../models/user';
-import { SECRET_KEY } from '../consts/consts';
+import { JWT_SECRET_KEY } from '../consts/consts';
 import { TokenData } from './token-data';
 import { ApiError } from '../api/api-error';
 
@@ -18,7 +18,7 @@ export class TokenUtils {
                     email: user.email
                 }
             },
-            SECRET_KEY,
+            JWT_SECRET_KEY,
             {
                 expiresIn: '1m'
             }
@@ -47,7 +47,7 @@ export class TokenUtils {
         return new Promise((resolve, reject) => {
             verify(
                 token,
-                SECRET_KEY,
+                JWT_SECRET_KEY,
                 TokenUtils.verifyCallback.bind(TokenUtils, resolve, reject)
             );
         });
@@ -57,7 +57,7 @@ export class TokenUtils {
         return new Promise((resolve, reject) => {
             verify(
                 token,
-                SECRET_KEY,
+                JWT_SECRET_KEY,
                 {
                     ignoreExpiration: true
                 },
