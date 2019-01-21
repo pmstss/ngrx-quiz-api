@@ -9,7 +9,7 @@ export interface QuizItemUpdate {
 }
 
 export class QuizItem implements QuizItemUpdate {
-    quizId: mongoose.Types.ObjectId;
+    quizId: mongoose.Types.ObjectId | string;
     question: string;
     choices: QuizItemChoice[];
     randomizeChoices: boolean;

@@ -3,7 +3,7 @@ import { NextFunction } from 'connect';
 import { QuizItemChoice } from '../models/quiz-item-choice';
 import { QuizRepo } from '../db/quiz-repo';
 import { ApiRequest } from '../api/api-request';
-import { QuizItemAnswerResult } from '../models/quiz-item-answer';
+import { QuizItemAnswerResult, QuizChoiceAnswerResult } from '../models/quiz-item-answer';
 import { QuizItem } from '../models/quiz-item';
 import { QuizState, QuizStateExternal } from '../models/quiz-state';
 import { writeResponse, writeErrorResponse } from '../api/response-writer';
@@ -55,7 +55,30 @@ export class QuizController {
     }
 
     getItem(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(this.repo.getItem(req.params.itemId), req, res, next);
+        writeResponse(
+            this.repo.getItem(req.params.itemId)
+                .then((item: QuizItem) => {
+                    const quizState: QuizState = req.session.quizes[item.quizId as string];
+                    if (!quizState) {
+                        throw new ApiError('Quiz is not initialized', 409);
+                    }
+
+                    const answers = quizState.answers[req.params.itemId];
+                    const choices = answers && answers.choices;
+                    return {
+                        ...item,
+                        choices: item.choices.map((itemChoice) => {
+                            const choice: QuizChoiceAnswerResult =
+                                choices && choices.find(ch => ch.id === itemChoice.id);
+                            return {
+                                ...itemChoice,
+                                checked: choice && choice.checked
+                            };
+                        })
+                    };
+                }),
+            req, res, next
+        );
     }
 
     submitAnswer(req: ApiRequest, res: Response, next: NextFunction) {
@@ -99,12 +122,16 @@ export class QuizController {
         const totalAnswers = choices.reduce((sum, ch) => sum + ch.counter, 0);
 
         return {
-            choices: choices.map((choice: QuizItemChoice) => ({
-                id: choice.id,
-                explanation: choice.explanation,
-                correct: choice.correct,
-                popularity: choice.counter / totalAnswers
-            })),
+            choices: choices.map((choice: QuizItemChoice) => {
+                const checked = userChoiceIds.includes(choice.id);
+                return {
+                    checked,
+                    id: choice.id,
+                    explanation: checked && choice.explanation,
+                    correct: choice.correct,
+                    popularity: choice.counter / totalAnswers
+                };
+            }),
             correct: arrayEqual(
                 userChoiceIds,
                 choices.filter(ch => ch.correct).map(ch => ch.id)

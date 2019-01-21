@@ -169,7 +169,8 @@ export class AdminQuizRepo {
             choices: item.choices,
             singleChoice: item.singleChoice,
             randomizeChoices: item.randomizeChoices,
-            counter: 0
+            counter: 0,
+            order: 0
         }).then(doc => this.getItem(doc.get('_id')));
     }
 

@@ -2,6 +2,7 @@ export interface QuizChoiceAnswerResult {
     id: string;
     explanation: string;
     correct: boolean;
+    checked: boolean;
     popularity: number;
 }
 
