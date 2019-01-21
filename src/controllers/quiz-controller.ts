@@ -1,27 +1,15 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
-import { QuizItemChoice } from '../models/quiz-item-choice';
 import { QuizRepo } from '../db/quiz-repo';
 import { ApiRequest } from '../api/api-request';
-import { QuizItemAnswerResult, QuizChoiceAnswerResult } from '../models/quiz-item-answer';
+import { QuizChoiceAnswerResult } from '../models/quiz-item-answer';
 import { QuizItem } from '../models/quiz-item';
-import { QuizState, QuizStateExternal } from '../models/quiz-state';
+import { QuizState, ClientQuizState } from '../state/quiz-state';
 import { writeResponse, writeErrorResponse } from '../api/response-writer';
 import { ApiError } from '../api/api-error';
 import { Quiz } from '../models/quiz';
-
-function arrayEqual(array1: any[], array2: any[]) {
-    return [...array1].sort().join(' ') === [...array2].sort().join(' ');
-}
-
-function initQuizState(totalQuestions: number): QuizState {
-    return {
-        totalQuestions,
-        answered: 0,
-        score: 0,
-        answers: {}
-    };
-}
+import { AnswerResultHelper } from './helpers/answer-result-helper';
+import { QuizItemChoice } from '../models/quiz-item-choice';
 
 export class QuizController {
     constructor(private repo: QuizRepo) {
@@ -32,22 +20,13 @@ export class QuizController {
     }
 
     getQuiz(req: ApiRequest, res: Response, next: NextFunction) {
-        if (!req.session.quizes) {
-            req.session.quizes = {};
-        }
-
         writeResponse(
             this.repo.getQuiz(req.params.shortName)
-                .then((quiz: Quiz): {quizMeta: Quiz, quizState: QuizStateExternal } => {
-                    if (!req.session.quizes[quiz.id]) {
-                        req.session.quizes[quiz.id] = initQuizState(quiz.totalQuestions);
-                    }
+                .then((quiz: Quiz): {quizMeta: Quiz, quizState: ClientQuizState } => {
+                    req.stateService.initQuizState(quiz.id, quiz.totalQuestions, false);
                     return {
                         quizMeta: quiz,
-                        quizState: {
-                            answers: req.session.quizes[quiz.id].answers,
-                            score: req.session.quizes[quiz.id].score
-                        }
+                        quizState: req.stateService.getClientQuizState(quiz.id)
                     };
                 }),
             req, res, next
@@ -58,13 +37,13 @@ export class QuizController {
         writeResponse(
             this.repo.getItem(req.params.itemId)
                 .then((item: QuizItem) => {
-                    const quizState: QuizState = req.session.quizes[item.quizId as string];
-                    if (!quizState) {
+                    if (!req.stateService.hasQuizState(item.quizId as string)) {
                         throw new ApiError('Quiz is not initialized', 409);
                     }
 
-                    const answers = quizState.answers[req.params.itemId];
-                    const choices = answers && answers.choices;
+                    const answers = req.stateService
+                        .getAnswers(item.quizId as string, req.params.itemId);
+                    const choices: QuizChoiceAnswerResult[] = answers ? answers.choices : null;
                     return {
                         ...item,
                         choices: item.choices.map((itemChoice) => {
@@ -90,52 +69,29 @@ export class QuizController {
             return;
         }
 
-        const quizState: QuizState = req.session.quizes[quizId];
-        if (!quizState) {
+        if (!req.stateService.hasQuizState(quizId)) {
             writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
-        } else if (quizState.answers[itemId]) {
+        } else if (req.stateService.isAnswered(quizId, itemId)) {
             writeErrorResponse(res, next, new ApiError('Answer is already submitted', 409));
         } else {
             writeResponse(
                 this.repo.submitAnswer(quizId, itemId, userChoiceIds)
                     .then((doc: QuizItem) => {
-                        const answerResult = this.prepareAnswerResult(userChoiceIds, doc);
-
-                        quizState.answers[itemId] = answerResult;
-                        quizState.answered++;
-                        if (answerResult.correct) {
-                            quizState.score++;
-                        }
-
+                        const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
+                        req.stateService.addAnswer(quizId, itemId, answerResult);
                         return answerResult;
                     }),
                 req, res, next);
         }
     }
 
-    prepareAnswerResult(userChoiceIds: string[], doc: QuizItem): QuizItemAnswerResult {
-        if (!doc) {
-            throw new ApiError('Item not found', 404);
+    resetQuizState(req: ApiRequest, res: Response, next: NextFunction) {
+        const quizState: QuizState = req.stateService.getQuizState(req.params.quizId);
+        if (!quizState) {
+            writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
+        } else {
+            req.stateService.initQuizState(req.params.quizId, quizState.totalQuestions, true);
+            writeResponse(Promise.resolve(null), req, res, next);
         }
-
-        const choices: QuizItemChoice[] = doc.choices;
-        const totalAnswers = choices.reduce((sum, ch) => sum + ch.counter, 0);
-
-        return {
-            choices: choices.map((choice: QuizItemChoice) => {
-                const checked = userChoiceIds.includes(choice.id);
-                return {
-                    checked,
-                    id: choice.id,
-                    explanation: checked && choice.explanation,
-                    correct: choice.correct,
-                    popularity: choice.counter / totalAnswers
-                };
-            }),
-            correct: arrayEqual(
-                userChoiceIds,
-                choices.filter(ch => ch.correct).map(ch => ch.id)
-            )
-        };
     }
 }

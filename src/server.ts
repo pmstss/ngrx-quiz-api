@@ -10,6 +10,7 @@ import { authRouter } from './routes/auth-router';
 import { tokenGuard } from './token/token-guard';
 import { dbConnect } from './db/db';
 import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
+import { stateGuard } from './state/state-guard';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -47,7 +48,7 @@ const MongoStore = require('connect-mongo')(session);
 
     app.use('/auth', authRouter);
     app.use('/api/admin', tokenGuard, adminQuizRouter);
-    app.use('/api', tokenGuard, quizRouter);
+    app.use('/api', stateGuard, tokenGuard, quizRouter);
 
     app.use((req: express.Request, res: express.Response) => {
         res.status(404).send('Not found');
