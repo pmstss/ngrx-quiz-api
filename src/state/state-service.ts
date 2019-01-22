@@ -2,11 +2,13 @@ import { Request } from 'express';
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
 import { QuizItemAnswerResult } from '../models/quiz-item-answer';
+import { QuizScore } from '../models/quiz-score';
+import { ApiRequest } from '../api/api-request';
 
 export class StateService {
     private state: SessionState;
 
-    constructor(req: Request) {
+    constructor(private req: ApiRequest) {
         this.state = req.session as any as SessionState;
 
         if (!this.state.quizes) {
@@ -28,7 +30,8 @@ export class StateService {
                 totalQuestions,
                 answers: {},
                 score: 0,
-                scoreSaved: false
+                scoreSaved: false,
+                startDate: new Date()
             };
         }
     }
@@ -52,6 +55,10 @@ export class StateService {
 
     addAnswer(quizId: string, itemId: string, answerResult: QuizItemAnswerResult) {
         const quizState = this.getQuizState(quizId);
+        if (Object.keys(quizState.answers).length === 0) {
+            quizState.startDate = new Date();
+        }
+
         quizState.answers[itemId] = answerResult;
         if (answerResult.correct) {
             quizState.score++;
@@ -63,13 +70,23 @@ export class StateService {
         return quizState && Object.keys(quizState.answers).length === quizState.totalQuestions;
     }
 
-    getQuizScore(quizId: string): number {
-        const quizState = this.getQuizState(quizId);
-        return quizState ? quizState.score : 0;
-    }
-
     isScoreSaved(quizId: string): boolean {
         const quizState = this.getQuizState(quizId);
         return !quizState || quizState.scoreSaved;
+    }
+
+    isScoreSaveRequired(quizId: string): boolean {
+        return this.isFinished(quizId) && !this.isScoreSaved(quizId);
+    }
+
+    getQuizScoreModel(quizId: string): QuizScore {
+        const quizState = this.getQuizState(quizId);
+        return {
+            quizId,
+            sessionId: this.req.sessionID,
+            userId: this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id,
+            score: quizState.score,
+            startDate: quizState.startDate
+        };
     }
 }

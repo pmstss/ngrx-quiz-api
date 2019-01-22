@@ -8,4 +8,5 @@ export interface ClientQuizState {
 export interface QuizState extends ClientQuizState {
     totalQuestions: number;
     scoreSaved: boolean;
+    startDate: Date;
 }

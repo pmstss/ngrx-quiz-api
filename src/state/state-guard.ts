@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { StateService } from './state-service';
+import { ApiRequest } from '../api/api-request';
 
-export const stateGuard = (req: Request, res: Response, next: NextFunction) => {
-    (req as any).stateService = new StateService(req);
+export const stateGuard = (req: ApiRequest, res: Response, next: NextFunction) => {
+    req.stateService = new StateService(req);
     next();
 };

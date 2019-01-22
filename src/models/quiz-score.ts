@@ -5,7 +5,8 @@ export interface QuizScore {
     sessionId: string;
     userId: string;
     score: number;
-    date?: Date;
+    startDate: Date;
+    submitDate?: Date;
 }
 
 // tslint:disable-next-line variable-name
@@ -22,7 +23,7 @@ export const QuizScoreSchema = new mongoose.Schema(
         userId: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'User',
-            required: true,
+            required: false,
             default: null
         },
         sessionId: {
@@ -35,10 +36,14 @@ export const QuizScoreSchema = new mongoose.Schema(
             max: 500,
             required: true
         },
-        date: {
+        submitDate: {
             type: mongoose.SchemaTypes.Date,
             required: true,
             default: Date.now
+        },
+        startDate: {
+            type: mongoose.SchemaTypes.Date,
+            required: true
         }
     },
     {

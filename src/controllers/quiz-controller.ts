@@ -79,14 +79,8 @@ export class QuizController {
                         const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
                         req.stateService.addAnswer(quizId, itemId, answerResult);
 
-                        if (req.stateService.isFinished(quizId) &&
-                                !req.stateService.isScoreSaved(quizId)) {
-                            this.repo.saveScore({
-                                quizId,
-                                sessionId: req.sessionID,
-                                userId: req.tokenData.user && req.tokenData.user.id,
-                                score: req.stateService.getQuizScore(quizId)
-                            });
+                        if (req.stateService.isScoreSaveRequired(quizId)) {
+                            this.repo.saveScore(req.stateService.getQuizScoreModel(quizId));
                         }
 
                         return answerResult;
@@ -103,5 +97,9 @@ export class QuizController {
             req.stateService.initQuizState(req.params.quizId, quizState.totalQuestions, true);
             writeResponse(Promise.resolve(null), req, res, next);
         }
+    }
+
+    getQuizScores(req: ApiRequest, res: Response, next: NextFunction) {
+        writeResponse(this.repo.getTopScores(req.params.quizId), req, res, next);
     }
 }
