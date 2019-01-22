@@ -189,7 +189,8 @@ export class AdminQuizRepo {
             {
                 $set: <QuizItemUpdate>{
                     question: item.question,
-                    choices: item.choices,
+                    choices: item.choices
+                        .map(ch => ({ ...ch, _id: mongoose.Types.ObjectId(ch.id) })),
                     singleChoice: item.singleChoice,
                     randomizeChoices: item.randomizeChoices
                 }
