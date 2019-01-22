@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { QuizModel, Quiz } from '../models/quiz';
 import { QuizItemModel, QuizItem, QuizItemUpdate } from '../models/quiz-item';
+import { ApiError } from '../api/api-error';
 
 export class AdminQuizRepo {
     getQuiz(quizId: string): Promise<mongoose.Document> {
@@ -77,7 +78,13 @@ export class AdminQuizRepo {
                 'items.__v': 0,
                 'items.choices._id': 0
             })
-            .exec();
+            .exec()
+            .then((docs: mongoose.Document[]) => {
+                if (docs.length) {
+                    return docs[0];
+                }
+                throw new ApiError('No such quiz', 404);
+            });
     }
 
     createQuiz(quiz: Quiz) {
