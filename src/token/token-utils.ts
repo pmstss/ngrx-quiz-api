@@ -15,7 +15,8 @@ export class TokenUtils {
                 user: {
                     id: user.id,
                     fullName: user.fullName,
-                    email: user.email
+                    email: user.email,
+                    admin: user.admin
                 }
             },
             JWT_SECRET_KEY,
