@@ -14,18 +14,19 @@ export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
     login(req: Request, res: Response, next: NextFunction) {
-        writeResponse(
-            this.repo.getUser(req.body.email).then((user: UserWithPassword) => {
-                if (user && compareSync(req.body.password, user.password)) {
-                    const token = TokenUtils.createUserToken(user);
-                    return this.tokenRepo.storeUserToken(user.id, token)
-                        .then(() => ({ token }));
-                }
+        writeResponse(this.loginAux(req.body.email, req.body.password), req, res, next);
+    }
 
-                throw new ApiError('Invalid credentials', 401);
-            }),
-            req, res, next
-        );
+    private loginAux(email: string, password: string): Promise<any> {
+        return this.repo.getUser(email).then((user: UserWithPassword) => {
+            if (user && compareSync(password, user.password)) {
+                const token = TokenUtils.createUserToken(user);
+                return this.tokenRepo.storeUserToken(user.id, token)
+                    .then(() => ({ token }));
+            }
+
+            throw new ApiError('Invalid credentials', 401);
+        });
     }
 
     logout(req: Request, res: Response, next: NextFunction) {
@@ -50,7 +51,7 @@ export class AuthController {
                 fullName: req.body.fullName,
                 password: req.body.password
             })
-            .then(() => this.login(req, res, next)),
+            .then(() => this.loginAux(req.body.email, req.body.password)),
             req, res, next);
     }
 
