@@ -10,7 +10,6 @@ export interface QuizItemChoice {
 
 // tslint:disable-next-line variable-name
 export const QuizItemChoiceSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     text: {
         type: mongoose.Schema.Types.String,
         required: true,
