@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { QuizModel, Quiz } from '../models/quiz';
 import { QuizItemModel, QuizItem } from '../models/quiz-item';
 import { ApiError } from '../api/api-error';
+import { QuizScoreModel, QuizScore } from '../models/quiz-score';
 
 export class QuizRepo {
     getQuizList(): Promise<Quiz[]> {
@@ -135,4 +136,15 @@ export class QuizRepo {
             return doc;
         });
     }
+
+    saveScore(quizScore: QuizScore): Promise<any> {
+        return QuizScoreModel.create(
+            {
+                quizId: mongoose.Types.ObjectId(quizScore.quizId),
+                sessionId: quizScore.sessionId,
+                userId: quizScore.userId ? mongoose.Types.ObjectId(quizScore.userId) : null,
+                score: quizScore.score
+            });
+    }
+
 }

@@ -9,7 +9,6 @@ import { writeResponse, writeErrorResponse } from '../api/response-writer';
 import { ApiError } from '../api/api-error';
 import { Quiz } from '../models/quiz';
 import { AnswerResultHelper } from './helpers/answer-result-helper';
-import { QuizItemChoice } from '../models/quiz-item-choice';
 
 export class QuizController {
     constructor(private repo: QuizRepo) {
@@ -51,7 +50,7 @@ export class QuizController {
                                 choices && choices.find(ch => ch.id === itemChoice.id);
                             return {
                                 ...itemChoice,
-                                checked: choice && choice.checked
+                                checked: choice && choice.checked || false
                             };
                         })
                     };
@@ -79,6 +78,17 @@ export class QuizController {
                     .then((doc: QuizItem) => {
                         const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
                         req.stateService.addAnswer(quizId, itemId, answerResult);
+
+                        if (req.stateService.isFinished(quizId) &&
+                                !req.stateService.isScoreSaved(quizId)) {
+                            this.repo.saveScore({
+                                quizId,
+                                sessionId: req.sessionID,
+                                userId: req.tokenData.user && req.tokenData.user.id,
+                                score: req.stateService.getQuizScore(quizId)
+                            });
+                        }
+
                         return answerResult;
                     }),
                 req, res, next);

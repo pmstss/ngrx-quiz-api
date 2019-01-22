@@ -26,9 +26,9 @@ export class StateService {
         if (force || !this.hasQuizState(quizId)) {
             this.state.quizes[quizId] = {
                 totalQuestions,
-                answered: 0,
+                answers: {},
                 score: 0,
-                answers: {}
+                scoreSaved: false
             };
         }
     }
@@ -53,9 +53,23 @@ export class StateService {
     addAnswer(quizId: string, itemId: string, answerResult: QuizItemAnswerResult) {
         const quizState = this.getQuizState(quizId);
         quizState.answers[itemId] = answerResult;
-        quizState.answered++;
         if (answerResult.correct) {
             quizState.score++;
         }
+    }
+
+    isFinished(quizId: string): boolean {
+        const quizState = this.getQuizState(quizId);
+        return quizState && Object.keys(quizState.answers).length === quizState.totalQuestions;
+    }
+
+    getQuizScore(quizId: string): number {
+        const quizState = this.getQuizState(quizId);
+        return quizState ? quizState.score : 0;
+    }
+
+    isScoreSaved(quizId: string): boolean {
+        const quizState = this.getQuizState(quizId);
+        return !quizState || quizState.scoreSaved;
     }
 }
