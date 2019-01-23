@@ -89,7 +89,7 @@ export class StateService {
             quizId,
             sessionId: this.req.sessionID,
             userId: this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id,
-            score: quizState.score,
+            score: quizState.score / quizState.totalQuestions,
             startDate: quizState.startDate
         };
     }
