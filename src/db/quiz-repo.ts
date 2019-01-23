@@ -154,8 +154,13 @@ export class QuizRepo {
             .match({
                 quizId: mongoose.Types.ObjectId(quizId)
             })
+            .addFields({
+                userId: {
+                    $ifNull: ['$userId', '$sessionId']
+                }
+            })
             .group({
-                _id: { sessionId: '$sessionId', userId: '$userId' },
+                _id: { userId: '$userId' },
                 score: { $max: '$score' },
                 date: { $max: '$startDate' }/*,
                 avgScore: { $avg: '$score' },
