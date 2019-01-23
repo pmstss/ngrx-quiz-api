@@ -11,6 +11,7 @@ import { tokenGuard } from './token/token-guard';
 import { dbConnect } from './db/db';
 import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
 import { stateGuard } from './state/state-guard';
+import { tempRouter } from './routes/temp-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -47,6 +48,7 @@ const MongoStore = require('connect-mongo')(session);
     }));
 
     app.use('/auth', authRouter);
+    app.use('/temp', tempRouter);
     app.use('/api/admin', tokenGuard, adminQuizRouter);
     app.use('/api', stateGuard, tokenGuard, quizRouter);
 
