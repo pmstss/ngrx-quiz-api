@@ -9,10 +9,11 @@ export const adminQuizRouter = Router();
 adminQuizRouter.get('/quizes/:quizId', controller.getQuiz.bind(controller));
 adminQuizRouter.post('/quizes', controller.createQuiz.bind(controller));
 adminQuizRouter.put('/quizes/:quizId', controller.updateQuiz.bind(controller));
-adminQuizRouter.put('/quizes/:quizId/items', controller.updateQuizItemsOrder.bind(controller));
 adminQuizRouter.delete('/quizes/:quizId', controller.deleteQuiz.bind(controller));
 
 adminQuizRouter.get('/items/:itemId', controller.getItem.bind(controller));
 adminQuizRouter.post('/items', controller.createItem.bind(controller));
 adminQuizRouter.put('/items/:itemId', controller.updateItem.bind(controller));
 adminQuizRouter.delete('/items/:itemId', controller.deleteItem.bind(controller));
+
+adminQuizRouter.put('/order/:quizId', controller.updateQuizItemsOrder.bind(controller));
