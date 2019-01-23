@@ -11,6 +11,8 @@ export interface Quiz {
     randomizeItems: boolean;
     totalQuestions: number;
     items?: QuizItem[];
+    started?: boolean;
+    finished?: boolean;
 }
 
 // tslint:disable-next-line variable-name

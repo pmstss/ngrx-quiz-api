@@ -15,7 +15,16 @@ export class QuizController {
     }
 
     getQuizList(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(this.repo.getQuizList(), req, res, next);
+        writeResponse(
+            this.repo.getQuizList().then((quizes: Quiz[]): Quiz[] =>
+                quizes.map(quiz => ({
+                    ...quiz,
+                    started: req.stateService.isStarted(quiz.id),
+                    finished: req.stateService.isFinished(quiz.id)
+                }))
+            ),
+            req, res, next
+        );
     }
 
     getQuiz(req: ApiRequest, res: Response, next: NextFunction) {
