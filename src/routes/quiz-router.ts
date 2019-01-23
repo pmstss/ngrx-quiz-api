@@ -10,4 +10,5 @@ quizRouter.get('/quizes/:shortName', controller.getQuiz.bind(controller));
 quizRouter.get('/items/:itemId', controller.getItem.bind(controller));
 quizRouter.post('/answers/:itemId', controller.submitAnswer.bind(controller));
 quizRouter.post('/reset/:quizId', controller.resetQuizState.bind(controller));
-quizRouter.get('/scores/:quizId', controller.getQuizScores.bind(controller));
+
+quizRouter.get('/top/:quizId', controller.getTopScores.bind(controller));

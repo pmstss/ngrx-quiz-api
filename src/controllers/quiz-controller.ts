@@ -108,7 +108,7 @@ export class QuizController {
         }
     }
 
-    getQuizScores(req: ApiRequest, res: Response, next: NextFunction) {
+    getTopScores(req: ApiRequest, res: Response, next: NextFunction) {
         writeResponse(this.repo.getTopScores(req.params.quizId), req, res, next);
     }
 }
