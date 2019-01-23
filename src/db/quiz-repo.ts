@@ -157,9 +157,10 @@ export class QuizRepo {
             .group({
                 _id: { sessionId: '$sessionId', userId: '$userId' },
                 score: { $max: '$score' },
+                date: { $max: '$startDate' }/*,
                 avgScore: { $avg: '$score' },
                 minScore: { $min: '$score' },
-                tries: { $sum: 1 }
+                tries: { $sum: 1 }*/
             })
             .limit(10)
             .sort({ score: -1 })
