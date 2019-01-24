@@ -1,9 +1,9 @@
-import { Request } from 'express';
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
 import { QuizItemAnswerResult } from '../models/quiz-item-answer';
 import { QuizScore } from '../models/quiz-score';
 import { ApiRequest } from '../api/api-request';
+import { Quiz } from '../models/quiz';
 
 export class StateService {
     private state: SessionState;
@@ -20,14 +20,31 @@ export class StateService {
         return this.state.quizes[quizId];
     }
 
+    getIdByName(quizName: string): string {
+        return Object.keys(this.state.quizes).find(id => this.state.quizes[id].shortName === quizName);
+    }
+
     hasQuizState(quizId: string): boolean {
         return this.state.quizes.hasOwnProperty(quizId);
     }
 
-    initQuizState(quizId: string, totalQuestions: number, force: boolean = false) {
-        if (force || !this.hasQuizState(quizId)) {
+    initQuizState(quiz: Quiz) {
+        if (!this.hasQuizState(quiz.id)) {
+            this.state.quizes[quiz.id] = {
+                totalQuestions: quiz.totalQuestions,
+                shortName: quiz.shortName,
+                answers: {},
+                score: 0,
+                scoreSaved: false,
+                startDate: new Date()
+            };
+        }
+    }
+
+    resetQuizState(quizId: string) {
+        if (this.hasQuizState(quizId)) {
             this.state.quizes[quizId] = {
-                totalQuestions,
+                ...this.state.quizes[quizId],
                 answers: {},
                 score: 0,
                 scoreSaved: false,

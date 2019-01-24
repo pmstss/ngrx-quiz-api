@@ -53,10 +53,10 @@ export class QuizRepo {
                         in: '$$x._id'
                     }
                 },
-                id: '$_id',
+                id: '$_id'/*,
                 totalQuestions: {
                     $size: '$items'
-                }
+                }*/
             })
             .project({
                 _id: 0,
@@ -72,12 +72,10 @@ export class QuizRepo {
             });
     }
 
-    getItem(itemId: string): Promise<QuizItem> {
+    aggregateItems(matchQuery: any): mongoose.Aggregate<any> {
         return QuizItemModel
             .aggregate()
-            .match({
-                _id: mongoose.Types.ObjectId(itemId)
-            })
+            .match(matchQuery)
             .addFields({
                 id: '$_id',
                 choices: {
@@ -95,14 +93,25 @@ export class QuizRepo {
                 _id: 0,
                 __v: 0,
                 counter: 0
-            })
-            .exec()
+            });
+    }
+
+    getItem(itemId: string): Promise<QuizItem> {
+        return this.aggregateItems({
+                _id: mongoose.Types.ObjectId(itemId)
+            }).exec()
             .then((docs: QuizItem[]) => {
                 if (docs.length) {
                     return docs[0];
                 }
                 throw new ApiError('No such item', 404);
             });
+    }
+
+    getItems(quizId: string): Promise<QuizItem> {
+        return this.aggregateItems({
+            quizId: mongoose.Types.ObjectId(quizId)
+        }).exec();
     }
 
     submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<any> {

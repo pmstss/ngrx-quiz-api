@@ -31,7 +31,7 @@ export class QuizController {
         writeResponse(
             this.repo.getQuiz(req.params.shortName)
                 .then((quiz: Quiz): {quizMeta: Quiz, quizState: ClientQuizState } => {
-                    req.stateService.initQuizState(quiz.id, quiz.totalQuestions, false);
+                    req.stateService.initQuizState(quiz);
                     return {
                         quizMeta: quiz,
                         quizState: req.stateService.getClientQuizState(quiz.id)
@@ -39,6 +39,18 @@ export class QuizController {
                 }),
             req, res, next
         );
+    }
+
+    getItems(req: ApiRequest, res: Response, next: NextFunction) {
+        if (!req.stateService.hasQuizState(req.params.quizId)) {
+            throw new ApiError('Quiz is not initialized', 409);
+        }
+
+        if (!req.stateService.isFinished(req.params.quizId)) {
+            throw new ApiError('Quiz is not finished', 409);
+        }
+
+        writeResponse(this.repo.getItems(req.params.quizId), req, res, next);
     }
 
     getItem(req: ApiRequest, res: Response, next: NextFunction) {
@@ -103,7 +115,7 @@ export class QuizController {
         if (!quizState) {
             writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
         } else {
-            req.stateService.initQuizState(req.params.quizId, quizState.totalQuestions, true);
+            req.stateService.resetQuizState(req.params.quizId);
             writeResponse(Promise.resolve(null), req, res, next);
         }
     }
