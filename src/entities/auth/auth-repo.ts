@@ -1,7 +1,4 @@
-import * as mongoose from 'mongoose';
-import { QuizModel } from '../models/quiz';
-import { QuizItemModel } from '../models/quiz-item';
-import { UserWithPassword, UserModel, User } from '../models/user';
+import { UserWithPassword, UserModel } from './user';
 
 export class AuthRepo {
     getUser(email: string): Promise<UserWithPassword> {

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { QuizItemRepo } from '../db/quiz-item-repo';
-import { ScoreRepo } from '../db/score-repo';
-import { QuizItemController } from '../controllers/quiz-item-controller';
+import { QuizItemRepo } from './quiz-item-repo';
+import { ScoreRepo } from '../score/score-repo';
+import { QuizItemController } from './quiz-item-controller';
 
 const controller = new QuizItemController(new QuizItemRepo(), new ScoreRepo());
 

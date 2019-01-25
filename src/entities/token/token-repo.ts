@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { UserTokenModel } from '../models/user-token';
+import { UserTokenModel } from './user-token';
 
 export class TokenRepo {
     exists(userId: string, token: string): Promise<boolean> {

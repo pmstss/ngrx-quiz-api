@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem } from '../models/quiz-item';
-import { ApiError } from '../api/api-error';
+import { QuizItemModel, QuizItem } from './quiz-item-model';
+import { ApiError } from '../../api/api-error';
 
 export class QuizItemRepo {
     private aggregateItems(matchQuery: any): mongoose.Aggregate<any> {

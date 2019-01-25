@@ -1,4 +1,4 @@
-import { QuizItemAnswerResult } from '../models/quiz-item-answer';
+import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
 
 export interface ClientQuizState {
     answers: { [itemId: string]: QuizItemAnswerResult };

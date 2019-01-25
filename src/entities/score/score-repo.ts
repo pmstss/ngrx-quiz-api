@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { QuizScoreModel, QuizScore, QuizScoreDoc,
-    QuizScoreMongooseDoc } from '../models/quiz-score';
+    QuizScoreMongooseDoc } from './score-model';
 
 export class ScoreRepo {
     saveScore(quizScore: QuizScoreDoc): Promise<string> {

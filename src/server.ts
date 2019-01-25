@@ -8,13 +8,13 @@ import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
 import { dbConnect } from './db/db';
 import { tokenGuard } from './token/token-guard';
 import { stateGuard } from './state/state-guard';
-import { authRouter } from './routes/auth-router';
-import { quizRouter } from './routes/quiz-router';
-import { adminQuizRouter } from './routes/admin-quiz-router';
-import { adminQuizItemRouter } from './routes/admin-quiz-item-router';
-import { commentRouter } from './routes/comment-router';
-import { tempRouter } from './routes/temp-router';
-import { quizItemRouter } from './routes/quiz-item-router';
+import { authRouter } from './entities/auth/auth-router';
+import { quizRouter } from './entities/quiz/quiz-router';
+import { adminQuizRouter } from './entities/admin-quiz/admin-quiz-router';
+import { adminQuizItemRouter } from './entities/admin-quiz-item/admin-quiz-item-router';
+import { itemCommentRouter } from './entities/item-comment/item-comment-router';
+import { tempRouter } from './entities/temp-router';
+import { quizItemRouter } from './entities/quiz-item/quiz-item-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -54,7 +54,7 @@ const MongoStore = require('connect-mongo')(session);
     app.use('/temp', tempRouter);
     app.use('/api/admin/quizes', tokenGuard, adminQuizRouter);
     app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);
-    app.use('/api/comments', stateGuard, tokenGuard, commentRouter);
+    app.use('/api/comments', stateGuard, tokenGuard, itemCommentRouter);
     app.use('/api/quizes', stateGuard, tokenGuard, quizRouter);
     app.use('/api/items', stateGuard, tokenGuard, quizItemRouter);
 

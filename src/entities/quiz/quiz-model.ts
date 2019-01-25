@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItem } from './quiz-item';
+import { QuizItem } from '../quiz-item/quiz-item-model';
 
 export interface Quiz {
     id: string;

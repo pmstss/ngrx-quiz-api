@@ -1,7 +1,7 @@
-import { QuizItem } from '../../models/quiz-item';
-import { QuizItemAnswerResult } from '../../models/quiz-item-answer';
-import { QuizItemChoice } from '../../models/quiz-item-choice';
 import { ApiError } from '../../api/api-error';
+import { QuizItem } from './quiz-item-model';
+import { QuizItemAnswerResult } from './quiz-item-answer';
+import { QuizItemChoice } from './quiz-item-choice';
 
 export class AnswerResultHelper {
     static arrayEqual(array1: any[], array2: any[]) {

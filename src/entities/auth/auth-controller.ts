@@ -1,14 +1,14 @@
 import * as mongoose from 'mongoose';
 import { Request, Response } from 'express';
-import { UserModel, UserWithPassword } from '../models/user';
 import { NextFunction } from 'connect';
 import { compareSync } from 'bcrypt';
-import { AuthRepo } from '../db/auth-repo';
-import { TokenUtils } from '../token/token-utils';
-import { writeResponse } from '../api/response-writer';
-import { ApiError } from '../api/api-error';
-import { TokenRepo } from '../db/token-repo';
-import { TokenData } from '../token/token-data';
+import { AuthRepo } from './auth-repo';
+import { TokenUtils } from '../../token/token-utils';
+import { writeResponse } from '../../api/response-writer';
+import { ApiError } from '../../api/api-error';
+import { TokenRepo } from '../token/token-repo';
+import { TokenData } from '../../token/token-data';
+import { UserModel, UserWithPassword } from './user';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}

@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
-import { AdminQuizRepo } from '../db/admin-quiz-repo';
-import { ApiRequest } from '../api/api-request';
-import { writeResponse } from '../api/response-writer';
-import { QuizAdmin } from '../models/quiz';
+import { AdminQuizRepo } from './admin-quiz-repo';
+import { ApiRequest } from '../../api/api-request';
+import { writeResponse } from '../../api/response-writer';
+import { QuizAdmin } from '../quiz/quiz';
 
 export class AdminQuizController {
     constructor(private repo: AdminQuizRepo) {

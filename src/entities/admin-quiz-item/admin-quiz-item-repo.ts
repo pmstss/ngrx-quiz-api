@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem, QuizItemUpdate } from '../models/quiz-item';
+import { QuizItemModel, QuizItem, QuizItemUpdate } from '../quiz-item/quiz-item-model';
 
 export class AdminQuizItemRepo {
     getItem(itemId: string): Promise<QuizItem> {

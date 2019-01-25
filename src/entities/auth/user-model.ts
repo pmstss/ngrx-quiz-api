@@ -1,7 +1,7 @@
 import { NextFunction } from 'express';
 import { hashSync } from 'bcrypt';
 import * as mongoose from 'mongoose';
-import { SALT_ROUNDS } from '../consts/consts';
+import { SALT_ROUNDS } from '../../consts/consts';
 
 export interface User {
     id: string;

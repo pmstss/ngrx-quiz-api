@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { TempController } from '../controllers/temp-controller';
+import { TempController } from './temp-controller';
 
 const controller = new TempController();
 

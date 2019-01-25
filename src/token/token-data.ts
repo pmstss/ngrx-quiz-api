@@ -1,4 +1,4 @@
-import { User } from '../models/user';
+import { User } from '../entities/auth/user';
 
 export interface TokenData {
     user: User;

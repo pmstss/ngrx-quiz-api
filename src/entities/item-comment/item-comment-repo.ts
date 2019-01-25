@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { ItemCommentModel, ItemComment, ItemCommentDoc,
-    ItemCommentMongooseDoc } from '../models/item-comment';
+    ItemCommentMongooseDoc } from './item-comment-model';
 
 export class CommentRepo {
     aggregateComments(matchQuery: any): mongoose.Aggregate<ItemCommentMongooseDoc[]> {

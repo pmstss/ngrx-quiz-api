@@ -1,9 +1,9 @@
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
-import { QuizItemAnswerResult } from '../models/quiz-item-answer';
-import { QuizScore, QuizScoreDoc } from '../models/quiz-score';
+import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
+import { QuizScoreDoc } from '../entities/score/score-model';
 import { ApiRequest } from '../api/api-request';
-import { Quiz } from '../models/quiz';
+import { Quiz } from '../entities/quiz/quiz';
 
 export class StateService {
     private state: SessionState;

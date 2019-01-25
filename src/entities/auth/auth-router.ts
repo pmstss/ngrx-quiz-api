@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/auth-controller';
-import { AuthRepo } from '../db/auth-repo';
-import { TokenRepo } from '../db/token-repo';
+import { AuthController } from './auth-controller';
+import { AuthRepo } from './auth-repo';
+import { TokenRepo } from '../token/token-repo';
 
 const authController = new AuthController(new AuthRepo(), new TokenRepo());
 

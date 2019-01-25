@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { NextFunction } from 'connect';
-import { QuizItemModel } from '../models/quiz-item';
+import { QuizItemModel } from './quiz-item/quiz-item-model';
 
 export class TempController {
     refreshChoiceIds(req: Request, res: Response, next: NextFunction) {

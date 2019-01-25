@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { sign, verify, VerifyErrors } from 'jsonwebtoken';
-import { User } from '../models/user';
+import { User } from '../entities/auth/user';
 import { JWT_SECRET_KEY } from '../consts/consts';
 import { TokenData } from './token-data';
 import { ApiError } from '../api/api-error';

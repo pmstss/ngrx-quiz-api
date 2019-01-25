@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../models/quiz';
-import { QuizItemModel } from '../models/quiz-item';
-import { ApiError } from '../api/api-error';
-import { DeleteResult } from './mongo-types';
+import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../quiz/quiz';
+import { QuizItemModel } from '../quiz-item/quiz-item-model';
+import { ApiError } from '../../api/api-error';
+import { DeleteResult } from '../mongo-types';
 
 export class AdminQuizRepo {
     getQuiz(quizId: string): Promise<QuizAdmin> {

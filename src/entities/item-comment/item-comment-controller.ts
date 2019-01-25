@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
-import { ApiRequest } from '../api/api-request';
-import { writeResponse } from '../api/response-writer';
-import { ItemComment } from '../models/item-comment';
-import { CommentRepo } from '../db/comment-repo';
+import { ApiRequest } from '../../api/api-request';
+import { writeResponse } from '../../api/response-writer';
+import { ItemComment } from './item-comment-model';
+import { CommentRepo } from './item-comment-repo';
 
 export class CommentController {
     constructor(private repo: CommentRepo) {
