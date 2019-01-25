@@ -1,20 +1,20 @@
 import * as mongoose from 'mongoose';
 
 export interface ItemComment {
+    id: string;
+    userName: string;
+    date: Date;
+    text: string;
+}
+
+export interface ItemCommentDoc {
     userId: string;
     itemId: string;
     text: string;
     date?: Date;
 }
 
-export interface ItemCommentDoc extends ItemComment, mongoose.Document {
-}
-
-export interface ItemCommentResponse {
-    id: string;
-    userName: string;
-    date: Date;
-    text: string;
+export interface ItemCommentMongooseDoc extends ItemCommentDoc, mongoose.Document {
 }
 
 // tslint:disable-next-line variable-name
@@ -41,4 +41,5 @@ const ItemCommentSchema = new mongoose.Schema({
 });
 
 // tslint:disable-next-line variable-name
-export const ItemCommentModel = mongoose.model<ItemCommentDoc>('ItemComment', ItemCommentSchema);
+export const ItemCommentModel =
+    mongoose.model<ItemCommentMongooseDoc>('ItemComment', ItemCommentSchema);

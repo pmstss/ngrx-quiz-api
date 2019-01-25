@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { ItemCommentModel, ItemCommentResponse, ItemComment,
-    ItemCommentDoc } from '../models/item-comment';
+import { ItemCommentModel, ItemComment, ItemCommentDoc,
+    ItemCommentMongooseDoc } from '../models/item-comment';
 
 export class CommentRepo {
-    aggregateComments(matchQuery: any): mongoose.Aggregate<ItemCommentDoc[]> {
+    aggregateComments(matchQuery: any): mongoose.Aggregate<ItemCommentMongooseDoc[]> {
         return ItemCommentModel
             .aggregate()
             .match(matchQuery)
@@ -45,25 +45,25 @@ export class CommentRepo {
             });
     }
 
-    getComments(itemId: string): Promise<ItemCommentResponse[]> {
-        return this.aggregateComments({ itemId: mongoose.Types.ObjectId(itemId) }).exec();
+    getComments(itemId: string): Promise<ItemComment[]> {
+        return this.aggregateComments({
+            itemId: mongoose.Types.ObjectId(itemId)
+        }).exec();
     }
 
-    getComment(id: string): Promise<ItemCommentResponse> {
+    getComment(id: string): Promise<ItemComment> {
         return this.aggregateComments({
             _id: mongoose.Types.ObjectId(id)
-        })
-            .exec()
-            .then((res: ItemCommentResponse[]) => res[0]);
+        }).exec().then((res: ItemComment[]) => res[0]);
     }
 
-    addComment(comment: ItemComment): Promise<ItemCommentResponse> {
+    addComment(comment: ItemCommentDoc): Promise<ItemComment> {
         return ItemCommentModel.create(
             {
                 itemId: mongoose.Types.ObjectId(comment.itemId),
                 userId: mongoose.Types.ObjectId(comment.userId),
                 text: comment.text
             }
-        ).then(doc => this.getComment(doc._id));
+        ).then((doc: ItemCommentMongooseDoc) => this.getComment(doc._id));
     }
 }
