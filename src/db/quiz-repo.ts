@@ -34,14 +34,8 @@ export class QuizRepo {
             })
             .lookup({
                 from: 'items',
-                let: { id: '$_id' },
-                pipeline: [{
-                    $match: {
-                        $expr: {
-                            $eq: ['$quizId', '$$id']
-                        }
-                    }
-                }],
+                localField: '_id',
+                foreignField: 'quizId',
                 as: 'items'
             })
             .addFields({
