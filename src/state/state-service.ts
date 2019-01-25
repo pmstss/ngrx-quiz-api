@@ -21,7 +21,8 @@ export class StateService {
     }
 
     getIdByName(quizName: string): string {
-        return Object.keys(this.state.quizes).find(id => this.state.quizes[id].shortName === quizName);
+        return Object.keys(this.state.quizes).find(id =>
+                this.state.quizes[id].shortName === quizName);
     }
 
     hasQuizState(quizId: string): boolean {

@@ -13,4 +13,3 @@ quizRouter.post('/answers/:itemId', controller.submitAnswer.bind(controller));
 quizRouter.post('/reset/:quizId', controller.resetQuizState.bind(controller));
 
 quizRouter.get('/top/:quizId', controller.getTopScores.bind(controller));
-
