@@ -32,7 +32,7 @@ export class StateService {
     initQuizState(quiz: Quiz) {
         if (!this.hasQuizState(quiz.id)) {
             this.state.quizes[quiz.id] = {
-                totalQuestions: quiz.totalQuestions,
+                itemIds: quiz.itemIds,
                 shortName: quiz.shortName,
                 answers: {},
                 score: 0,
@@ -68,7 +68,7 @@ export class StateService {
 
     isFinished(quizId: string): boolean {
         const quizState = this.getQuizState(quizId);
-        return !!quizState && Object.keys(quizState.answers).length === quizState.totalQuestions;
+        return !!quizState && Object.keys(quizState.answers).length === quizState.itemIds.length;
     }
 
     isAnswered(quizId: string, itemId: string): boolean {
@@ -107,7 +107,7 @@ export class StateService {
             quizId,
             sessionId: this.req.sessionID,
             userId: this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id,
-            score: quizState.score / quizState.totalQuestions,
+            score: quizState.score / quizState.itemIds.length,
             startDate: quizState.startDate
         };
     }

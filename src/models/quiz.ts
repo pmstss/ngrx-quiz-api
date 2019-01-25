@@ -8,7 +8,7 @@ export interface Quiz {
     description: string;
     descriptionFull: string;
     randomizeItems: boolean;
-    itemIds: QuizItem[];
+    itemIds: string[];
 }
 
 export interface QuizAdminResponse extends Quiz {

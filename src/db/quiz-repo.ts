@@ -16,6 +16,7 @@ export class QuizRepo {
             })
             .addFields({
                 id: '$_id',
+                // TODO ### include in types
                 totalQuestions: { $size: '$items' }
             })
             .project({
@@ -46,10 +47,7 @@ export class QuizRepo {
                         in: '$$x._id'
                     }
                 },
-                id: '$_id'/*,
-                totalQuestions: {
-                    $size: '$items'
-                }*/
+                id: '$_id'
             })
             .project({
                 _id: 0,

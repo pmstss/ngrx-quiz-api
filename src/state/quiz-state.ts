@@ -5,7 +5,7 @@ export interface ClientQuizState {
 }
 
 export interface QuizState extends ClientQuizState {
-    totalQuestions: number;
+    itemIds: string[];
     shortName: string;
     score: number;
     scoreSaved: boolean;
