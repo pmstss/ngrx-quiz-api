@@ -3,15 +3,18 @@ import { NextFunction } from 'connect';
 import { ApiResponse } from './api-response';
 import { ApiError } from './api-error';
 
-export const writeResponse = (dataPromise: Promise<any>, req: Request,
-                              res: Response, next: NextFunction) => {
+const MAX_ERROR_LENGTH = 200;
+
+export const writeResponse = <T>(dataPromise: Promise<T>, req: Request,
+                                 res: Response, next: NextFunction): Promise<T> => {
     return dataPromise
         .then((data: any) => {
             writeSuccessResponse(req, res, next, data);
         })
         .catch((err) => {
             writeErrorResponse(res, next, err);
-        });
+        })
+        .then(() => dataPromise); // for type checking in contollers
 };
 
 const writeSuccessResponse = (req: Request, res: Response,
@@ -35,6 +38,11 @@ export const writeErrorResponse = (res: Response, next: NextFunction,
         success: false,
         message: err.message || err
     };
+
+    if (apiResponse.message && apiResponse.message.length > MAX_ERROR_LENGTH) {
+        // tslint:disable-next-line prefer-template
+        apiResponse.message = apiResponse.message.substr(0, MAX_ERROR_LENGTH) + '...';
+    }
 
     res.json(apiResponse);
 };
