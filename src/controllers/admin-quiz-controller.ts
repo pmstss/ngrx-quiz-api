@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
 import { AdminQuizRepo } from '../db/admin-quiz-repo';
-import { writeResponse } from '../api/response-writer';
 import { ApiRequest } from '../api/api-request';
+import { writeResponse } from '../api/response-writer';
 import { QuizAdminResponse } from '../models/quiz';
 
 export class AdminQuizController {
