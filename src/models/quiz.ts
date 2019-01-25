@@ -27,12 +27,15 @@ export interface QuizListItem {
     finished: boolean;
 }
 
-export interface QuizDoc extends mongoose.Document {
+export interface QuizDoc {
     name: string;
     shortName: string;
     description: string;
     descriptionFull: string;
     randomizeItems: boolean;
+}
+
+export interface QuizMongooseDoc extends QuizDoc, mongoose.Document {
 }
 
 // tslint:disable-next-line variable-name
@@ -76,4 +79,4 @@ export const QuizSchema = new mongoose.Schema(
 );
 
 // tslint:disable-next-line variable-name
-export const QuizModel = mongoose.model<QuizDoc>('Quiz', QuizSchema);
+export const QuizModel = mongoose.model<QuizMongooseDoc>('Quiz', QuizSchema);

@@ -1,12 +1,20 @@
 import * as mongoose from 'mongoose';
 
 export interface QuizScore {
-    quizId: string;
-    sessionId: string;
-    userId: string;
+    userName: string;
     score: number;
-    startDate: Date;
-    submitDate?: Date;
+    date: Date;
+}
+
+export interface QuizScoreDoc {
+    quizId: string;
+    userId: string;
+    sessionId: string;
+    score: number;
+    date: Date;
+}
+
+export interface QuizScoreMongooseDoc extends QuizScoreDoc, mongoose.Document {
 }
 
 // tslint:disable-next-line variable-name
@@ -36,14 +44,10 @@ export const QuizScoreSchema = new mongoose.Schema(
             max: 500,
             required: true
         },
-        submitDate: {
+        date: {
             type: mongoose.SchemaTypes.Date,
             required: true,
             default: Date.now
-        },
-        startDate: {
-            type: mongoose.SchemaTypes.Date,
-            required: true
         }
     },
     {
@@ -52,4 +56,4 @@ export const QuizScoreSchema = new mongoose.Schema(
 );
 
 // tslint:disable-next-line variable-name
-export const QuizScoreModel = mongoose.model('QuizScore', QuizScoreSchema);
+export const QuizScoreModel = mongoose.model<QuizScoreMongooseDoc>('QuizScore', QuizScoreSchema);

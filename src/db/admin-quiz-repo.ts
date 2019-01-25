@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz, QuizAdmin, QuizDoc } from '../models/quiz';
+import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../models/quiz';
 import { QuizItemModel } from '../models/quiz-item';
 import { ApiError } from '../api/api-error';
 import { DeleteResult } from './mongo-types';
@@ -80,7 +80,7 @@ export class AdminQuizRepo {
                 'items.choices._id': 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => {
+            .then((docs: QuizAdmin[]) => {
                 if (docs.length) {
                     return docs[0];
                 }
@@ -89,13 +89,13 @@ export class AdminQuizRepo {
     }
 
     createQuiz(quiz: Quiz): Promise<QuizAdmin> {
-        return QuizModel.create({
+        return QuizModel.create((<QuizDoc>{
             shortName: quiz.shortName,
             name: quiz.name,
             description: quiz.name,
             descriptionFull: quiz.name,
             randomizeItems: quiz.randomizeItems
-        }).then(doc => this.getQuiz(doc._id));
+        })).then((doc: QuizMongooseDoc) => this.getQuiz(doc._id));
     }
 
     // TODO ### mark as deleted (with unique shortName change)

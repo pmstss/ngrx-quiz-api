@@ -1,7 +1,7 @@
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
 import { QuizItemAnswerResult } from '../models/quiz-item-answer';
-import { QuizScore } from '../models/quiz-score';
+import { QuizScore, QuizScoreDoc } from '../models/quiz-score';
 import { ApiRequest } from '../api/api-request';
 import { Quiz } from '../models/quiz';
 
@@ -101,14 +101,14 @@ export class StateService {
         return this.isFinished(quizId) && !this.isScoreSaved(quizId);
     }
 
-    getQuizScoreModel(quizId: string): QuizScore {
+    getQuizScoreDoc(quizId: string): QuizScoreDoc {
         const quizState = this.getQuizState(quizId);
         return {
             quizId,
             sessionId: this.req.sessionID,
             userId: this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id,
             score: quizState.score / quizState.itemIds.length,
-            startDate: quizState.startDate
+            date: quizState.startDate
         };
     }
 }

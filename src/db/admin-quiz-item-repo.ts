@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { QuizItemModel, QuizItem, QuizItemUpdate } from '../models/quiz-item';
 
 export class AdminQuizItemRepo {
-    getItem(itemId: string) {
+    getItem(itemId: string): Promise<QuizItem> {
         return QuizItemModel
             .aggregate()
             .match({
@@ -26,7 +26,7 @@ export class AdminQuizItemRepo {
                 'choices._id': 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => docs[0]);
+            .then((res: QuizItem[]) => res[0]);
     }
 
     createItem(quizId: string, item: QuizItem) {

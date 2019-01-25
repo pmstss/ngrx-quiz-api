@@ -1,19 +1,21 @@
 import * as mongoose from 'mongoose';
-import { QuizScoreModel, QuizScore } from '../models/quiz-score';
+import { QuizScoreModel, QuizScore, QuizScoreDoc,
+    QuizScoreMongooseDoc } from '../models/quiz-score';
 
 export class ScoreRepo {
-    saveScore(quizScore: QuizScore): Promise<any> {
+    saveScore(quizScore: QuizScoreDoc): Promise<string> {
         return QuizScoreModel.create(
             {
                 quizId: mongoose.Types.ObjectId(quizScore.quizId),
                 sessionId: quizScore.sessionId,
                 userId: quizScore.userId ? mongoose.Types.ObjectId(quizScore.userId) : null,
                 score: quizScore.score,
-                startDate: quizScore.startDate
-            });
+                date: quizScore.date,
+                sdfsdf: 42334
+            }).then((res: QuizScoreMongooseDoc) => res._id);
     }
 
-    getTopScores(quizId: string): Promise<any> {
+    getTopScores(quizId: string): Promise<QuizScore[]> {
         return QuizScoreModel
             .aggregate()
             .match({
@@ -27,7 +29,7 @@ export class ScoreRepo {
             .group({
                 _id: { userId: '$userId' },
                 score: { $max: '$score' },
-                date: { $max: '$startDate' }/*,
+                date: { $max: '$date' }/*,
                 avgScore: { $avg: '$score' },
                 minScore: { $min: '$score' },
                 tries: { $sum: 1 }*/

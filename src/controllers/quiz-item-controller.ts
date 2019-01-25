@@ -74,7 +74,7 @@ export class QuizItemController {
                         req.stateService.addAnswer(quizId, itemId, answerResult);
 
                         if (req.stateService.isScoreSaveRequired(quizId)) {
-                            this.scoreRepo.saveScore(req.stateService.getQuizScoreModel(quizId));
+                            this.scoreRepo.saveScore(req.stateService.getQuizScoreDoc(quizId));
                         }
 
                         return answerResult;
