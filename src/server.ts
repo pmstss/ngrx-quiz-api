@@ -55,7 +55,7 @@ const MongoStore = require('connect-mongo')(session);
     app.use('/api/admin/quizes', tokenGuard, adminQuizRouter);
     app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);
     app.use('/api/comments', stateGuard, tokenGuard, commentRouter);
-    app.use('/api', stateGuard, tokenGuard, quizRouter);
+    app.use('/api/quizes', stateGuard, tokenGuard, quizRouter);
     app.use('/api', stateGuard, tokenGuard, quizItemRouter);
 
     app.use((req: express.Request, res: express.Response) => {
