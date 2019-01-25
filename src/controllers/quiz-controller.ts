@@ -1,17 +1,18 @@
 import { Response } from 'express';
 import { NextFunction } from 'connect';
 import { QuizRepo } from '../db/quiz-repo';
+import { ScoreRepo } from '../db/score-repo';
 import { ApiRequest } from '../api/api-request';
+import { ApiError } from '../api/api-error';
+import { writeResponse, writeErrorResponse } from '../api/response-writer';
+import { Quiz } from '../models/quiz';
 import { QuizChoiceAnswerResult } from '../models/quiz-item-answer';
 import { QuizItem } from '../models/quiz-item';
 import { QuizState, ClientQuizState } from '../state/quiz-state';
-import { writeResponse, writeErrorResponse } from '../api/response-writer';
-import { ApiError } from '../api/api-error';
-import { Quiz } from '../models/quiz';
 import { AnswerResultHelper } from './helpers/answer-result-helper';
 
 export class QuizController {
-    constructor(private repo: QuizRepo) {
+    constructor(private repo: QuizRepo, private scoreRepo: ScoreRepo) {
     }
 
     getQuizList(req: ApiRequest, res: Response, next: NextFunction) {
@@ -101,7 +102,7 @@ export class QuizController {
                         req.stateService.addAnswer(quizId, itemId, answerResult);
 
                         if (req.stateService.isScoreSaveRequired(quizId)) {
-                            this.repo.saveScore(req.stateService.getQuizScoreModel(quizId));
+                            this.scoreRepo.saveScore(req.stateService.getQuizScoreModel(quizId));
                         }
 
                         return answerResult;
@@ -121,6 +122,6 @@ export class QuizController {
     }
 
     getTopScores(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(this.repo.getTopScores(req.params.quizId), req, res, next);
+        writeResponse(this.scoreRepo.getTopScores(req.params.quizId), req, res, next);
     }
 }
