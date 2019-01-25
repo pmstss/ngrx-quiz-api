@@ -5,17 +5,18 @@ import { ScoreRepo } from '../db/score-repo';
 import { ApiRequest } from '../api/api-request';
 import { ApiError } from '../api/api-error';
 import { writeResponse, writeErrorResponse } from '../api/response-writer';
-import { Quiz } from '../models/quiz';
+import { Quiz, QuizListItem } from '../models/quiz';
 import { QuizState, ClientQuizState } from '../state/quiz-state';
 
 export class QuizController {
     constructor(private repo: QuizRepo, private scoreRepo: ScoreRepo) {
     }
 
-    getQuizList(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(
-            this.repo.getQuizList().then((quizes: Quiz[]): Quiz[] =>
-                quizes.map(quiz => ({
+    getQuizList(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizListItem[]> {
+        return writeResponse(
+            this.repo.getQuizList().then(
+                (quizes: (Quiz & {totalQuestions: number})[]): QuizListItem[] =>
+                quizes.map((quiz: (Quiz & {totalQuestions: number})): QuizListItem => ({
                     ...quiz,
                     started: req.stateService.isStarted(quiz.id),
                     finished: req.stateService.isFinished(quiz.id)
@@ -25,21 +26,21 @@ export class QuizController {
         );
     }
 
-    getQuiz(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(
+    getQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<Quiz & ClientQuizState> {
+        return writeResponse(
             this.repo.getQuiz(req.params.shortName)
-                .then((quiz: Quiz): {quizMeta: Quiz, quizState: ClientQuizState } => {
+                .then((quiz: Quiz): Quiz & ClientQuizState => {
                     req.stateService.initQuizState(quiz);
                     return {
-                        quizMeta: quiz,
-                        quizState: req.stateService.getClientQuizState(quiz.id)
+                        ...quiz,
+                        ...req.stateService.getClientQuizState(quiz.id)
                     };
                 }),
             req, res, next
         );
     }
 
-    resetQuizState(req: ApiRequest, res: Response, next: NextFunction) {
+    resetQuizState(req: ApiRequest, res: Response, next: NextFunction): void {
         const quizState: QuizState = req.stateService.getQuizState(req.params.quizId);
         if (!quizState) {
             writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));

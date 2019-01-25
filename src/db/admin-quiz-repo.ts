@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz, QuizAdminResponse, QuizDoc } from '../models/quiz';
+import { QuizModel, Quiz, QuizAdmin, QuizDoc } from '../models/quiz';
 import { QuizItemModel } from '../models/quiz-item';
 import { ApiError } from '../api/api-error';
 import { DeleteResult } from './mongo-types';
 
 export class AdminQuizRepo {
-    getQuiz(quizId: string): Promise<QuizAdminResponse> {
+    getQuiz(quizId: string): Promise<QuizAdmin> {
         return QuizModel
             .aggregate()
             .match({
@@ -88,7 +88,7 @@ export class AdminQuizRepo {
             });
     }
 
-    createQuiz(quiz: Quiz): Promise<QuizAdminResponse> {
+    createQuiz(quiz: Quiz): Promise<QuizAdmin> {
         return QuizModel.create({
             shortName: quiz.shortName,
             name: quiz.name,
@@ -112,7 +112,7 @@ export class AdminQuizRepo {
         });
     }
 
-    updateQuiz(quizId: string, quiz: Quiz): Promise<QuizAdminResponse> {
+    updateQuiz(quizId: string, quiz: Quiz): Promise<QuizAdmin> {
         return QuizModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(quizId)

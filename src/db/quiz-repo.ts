@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz } from '../models/quiz';
+import { QuizModel, Quiz, QuizListItem } from '../models/quiz';
 import { ApiError } from '../api/api-error';
 
 export class QuizRepo {
-    getQuizList(): Promise<Quiz[]> {
+    getQuizList(): Promise<(Quiz & {totalQuestions: number})[]> {
         return QuizModel
             .aggregate()
             .lookup({
@@ -14,7 +14,6 @@ export class QuizRepo {
             })
             .addFields({
                 id: '$_id',
-                // TODO ### include in types
                 totalQuestions: { $size: '$items' }
             })
             .project({

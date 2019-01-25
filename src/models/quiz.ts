@@ -11,11 +11,18 @@ export interface Quiz {
     itemIds: string[];
 }
 
-export interface QuizAdminResponse extends Quiz {
-    items?: QuizItem[];
+export interface QuizAdmin extends Quiz {
+    items: QuizItem[];
 }
 
-export interface QuizResponse extends Quiz {
+export interface QuizListItem {
+    id: string;
+    name: string;
+    shortName: string;
+    description: string;
+    descriptionFull: string;
+    randomizeItems: boolean;
+    totalQuestions: number; // insteadof itemIds
     started: boolean;
     finished: boolean;
 }
