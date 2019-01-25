@@ -31,7 +31,6 @@ export class QuizRepo {
             .aggregate()
             .match({
                 shortName
-                // { _id: mongoose.Types.ObjectId(req.params.shortName) }
             })
             .lookup({
                 from: 'items',
@@ -89,23 +88,39 @@ export class QuizRepo {
                     }
                 }
             })
+            .lookup({
+                from: 'itemcomments',
+                let: { id: '$_id' },
+                pipeline: [{
+                    $match: {
+                        $expr: {
+                            $eq: ['$itemId', '$$id']
+                        }
+                    }
+                }],
+                as: 'comments'
+            })
+            .addFields({
+                numberOfComments: {
+                    $size: '$comments'
+                }
+            })
             .project({
                 _id: 0,
                 __v: 0,
-                counter: 0
+                comments: 0
             });
     }
 
     getItem(itemId: string): Promise<QuizItem> {
         return this.aggregateItems({
-                _id: mongoose.Types.ObjectId(itemId)
-            }).exec()
-            .then((docs: QuizItem[]) => {
-                if (docs.length) {
-                    return docs[0];
-                }
-                throw new ApiError('No such item', 404);
-            });
+            _id: mongoose.Types.ObjectId(itemId)
+        }).exec().then((docs: QuizItem[]) => {
+            if (docs.length) {
+                return docs[0];
+            }
+            throw new ApiError('No such item', 404);
+        });
     }
 
     getItems(quizId: string): Promise<QuizItem> {
