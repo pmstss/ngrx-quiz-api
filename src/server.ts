@@ -4,15 +4,16 @@ import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 
+import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
+import { dbConnect } from './db/db';
+import { tokenGuard } from './token/token-guard';
+import { stateGuard } from './state/state-guard';
+import { authRouter } from './routes/auth-router';
 import { quizRouter } from './routes/quiz-router';
 import { adminQuizRouter } from './routes/admin-quiz-router';
-import { authRouter } from './routes/auth-router';
-import { tokenGuard } from './token/token-guard';
-import { dbConnect } from './db/db';
-import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
-import { stateGuard } from './state/state-guard';
-import { tempRouter } from './routes/temp-router';
+import { adminQuizItemRouter } from './routes/admin-quiz-item-router';
 import { commentRouter } from './routes/comment-router';
+import { tempRouter } from './routes/temp-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -50,7 +51,8 @@ const MongoStore = require('connect-mongo')(session);
 
     app.use('/auth', authRouter);
     app.use('/temp', tempRouter);
-    app.use('/api/admin', tokenGuard, adminQuizRouter);
+    app.use('/api/admin/quizes', tokenGuard, adminQuizRouter);
+    app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);
     app.use('/api/comments', stateGuard, tokenGuard, commentRouter);
     app.use('/api', stateGuard, tokenGuard, quizRouter);
 

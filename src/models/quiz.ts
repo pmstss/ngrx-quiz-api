@@ -7,12 +7,25 @@ export interface Quiz {
     shortName: string;
     description: string;
     descriptionFull: string;
-    timeLimit?: number;
     randomizeItems: boolean;
+    itemIds: QuizItem[];
+}
+
+export interface QuizAdminResponse extends Quiz {
     items?: QuizItem[];
-    itemIds?: QuizItem[];
-    started?: boolean;
-    finished?: boolean;
+}
+
+export interface QuizResponse extends Quiz {
+    started: boolean;
+    finished: boolean;
+}
+
+export interface QuizDoc extends mongoose.Document {
+    name: string;
+    shortName: string;
+    description: string;
+    descriptionFull: string;
+    randomizeItems: boolean;
 }
 
 // tslint:disable-next-line variable-name
@@ -45,10 +58,6 @@ export const QuizSchema = new mongoose.Schema(
             maxlength: 2048,
             required: true
         },
-        timeLimit: {
-            type: mongoose.SchemaTypes.Number,
-            required: true
-        },
         randomizeItems: {
             type: mongoose.SchemaTypes.Boolean,
             required: true
@@ -60,4 +69,4 @@ export const QuizSchema = new mongoose.Schema(
 );
 
 // tslint:disable-next-line variable-name
-export const QuizModel = mongoose.model('Quiz', QuizSchema);
+export const QuizModel = mongoose.model<QuizDoc>('Quiz', QuizSchema);
