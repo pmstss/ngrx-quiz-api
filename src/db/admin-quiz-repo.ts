@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { QuizModel, Quiz, QuizAdminResponse, QuizDoc } from '../models/quiz';
 import { QuizItemModel } from '../models/quiz-item';
 import { ApiError } from '../api/api-error';
+import { DeleteResult } from './mongo-types';
 
 export class AdminQuizRepo {
     getQuiz(quizId: string): Promise<QuizAdminResponse> {
@@ -98,13 +99,17 @@ export class AdminQuizRepo {
     }
 
     // TODO ### mark as deleted (with unique shortName change)
-    // TODO ### define response type
-    deleteQuiz(quizId: string) {
+    deleteQuiz(quizId: string): Promise<void> {
         return Promise.all([
+            <Promise<DeleteResult>><any>
             QuizItemModel.deleteMany({ quizId: mongoose.Types.ObjectId(quizId) }).exec(),
+            <Promise<DeleteResult>><any>
             QuizModel.deleteOne({ _id: mongoose.Types.ObjectId(quizId) }).exec()
-        ]).then(([itemsDeleteResult, quizDeleteResult]) =>
-            ({ itemsDeleteResult, quizDeleteResult }));
+        ]).then(([itemsDeleteResult, quizDeleteResult]: [DeleteResult, DeleteResult]) => {
+            if (!itemsDeleteResult.ok || !quizDeleteResult.ok || quizDeleteResult.n === 0) {
+                throw new ApiError('Error deleting quiz', 404);
+            }
+        });
     }
 
     updateQuiz(quizId: string, quiz: Quiz): Promise<QuizAdminResponse> {
