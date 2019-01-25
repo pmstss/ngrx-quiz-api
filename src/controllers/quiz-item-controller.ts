@@ -13,16 +13,17 @@ export class QuizItemController {
     constructor(private repo: QuizItemRepo, private scoreRepo: ScoreRepo) {
     }
 
-    getItems(req: ApiRequest, res: Response, next: NextFunction) {
-        if (!req.stateService.hasQuizState(req.params.quizId)) {
+    getQuizItems(req: ApiRequest, res: Response, next: NextFunction) {
+        const quizId = req.query.quizId;
+        if (!req.stateService.hasQuizState(quizId)) {
             throw new ApiError('Quiz is not initialized', 409);
         }
 
-        if (!req.stateService.isFinished(req.params.quizId)) {
+        if (!req.stateService.isFinished(quizId)) {
             throw new ApiError('Quiz is not finished', 409);
         }
 
-        writeResponse(this.repo.getItems(req.params.quizId), req, res, next);
+        writeResponse(this.repo.getItems(quizId), req, res, next);
     }
 
     getItem(req: ApiRequest, res: Response, next: NextFunction) {
