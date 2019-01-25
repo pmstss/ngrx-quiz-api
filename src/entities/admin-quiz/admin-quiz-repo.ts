@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../quiz/quiz';
+import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
 import { QuizItemModel } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { DeleteResult } from '../mongo-types';

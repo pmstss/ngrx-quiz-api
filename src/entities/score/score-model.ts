@@ -7,8 +7,8 @@ export interface QuizScore {
 }
 
 export interface QuizScoreDoc {
-    quizId: string;
-    userId: string;
+    quizId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
     sessionId: string;
     score: number;
     date: Date;
@@ -36,6 +36,7 @@ export const QuizScoreSchema = new mongoose.Schema(
         },
         sessionId: {
             type: mongoose.SchemaTypes.String,
+            maxlength: 64,
             required: true
         },
         score: {

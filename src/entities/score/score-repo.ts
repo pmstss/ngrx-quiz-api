@@ -4,15 +4,7 @@ import { QuizScoreModel, QuizScore, QuizScoreDoc,
 
 export class ScoreRepo {
     saveScore(quizScore: QuizScoreDoc): Promise<string> {
-        return QuizScoreModel.create(
-            {
-                quizId: mongoose.Types.ObjectId(quizScore.quizId),
-                sessionId: quizScore.sessionId,
-                userId: quizScore.userId ? mongoose.Types.ObjectId(quizScore.userId) : null,
-                score: quizScore.score,
-                date: quizScore.date,
-                sdfsdf: 42334
-            }).then((res: QuizScoreMongooseDoc) => res._id);
+        return QuizScoreModel.create(quizScore).then((res: QuizScoreMongooseDoc) => res._id);
     }
 
     getTopScores(quizId: string): Promise<QuizScore[]> {

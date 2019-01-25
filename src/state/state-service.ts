@@ -1,9 +1,10 @@
+import * as mongoose from 'mongoose';
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
 import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
 import { QuizScoreDoc } from '../entities/score/score-model';
 import { ApiRequest } from '../api/api-request';
-import { Quiz } from '../entities/quiz/quiz';
+import { Quiz } from '../entities/quiz/quiz-model';
 
 export class StateService {
     private state: SessionState;
@@ -103,10 +104,11 @@ export class StateService {
 
     getQuizScoreDoc(quizId: string): QuizScoreDoc {
         const quizState = this.getQuizState(quizId);
+        const userId = this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id;
         return {
-            quizId,
+            quizId: new mongoose.Types.ObjectId(quizId),
+            userId: userId ? new mongoose.Types.ObjectId(userId) : null,
             sessionId: this.req.sessionID,
-            userId: this.req.tokenData && this.req.tokenData.user && this.req.tokenData.user.id,
             score: quizState.score / quizState.itemIds.length,
             date: quizState.startDate
         };

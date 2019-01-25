@@ -8,7 +8,7 @@ import { writeResponse } from '../../api/response-writer';
 import { ApiError } from '../../api/api-error';
 import { TokenRepo } from '../token/token-repo';
 import { TokenData } from '../../token/token-data';
-import { UserModel, UserWithPassword } from './user';
+import { UserModel, UserWithPassword } from './user-model';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}

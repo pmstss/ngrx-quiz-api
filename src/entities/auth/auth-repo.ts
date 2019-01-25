@@ -1,4 +1,4 @@
-import { UserWithPassword, UserModel } from './user';
+import { UserWithPassword, UserModel } from './user-model';
 
 export class AuthRepo {
     getUser(email: string): Promise<UserWithPassword> {

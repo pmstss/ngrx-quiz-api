@@ -5,7 +5,7 @@ import { ScoreRepo } from '../score/score-repo';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
-import { Quiz, QuizListItem } from './quiz';
+import { Quiz, QuizListItem } from './quiz-model';
 import { QuizState, ClientQuizState } from '../../state/quiz-state';
 import { QuizScore } from '../score/score-model';
 

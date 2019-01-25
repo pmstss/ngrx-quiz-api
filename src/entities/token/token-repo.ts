@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { UserTokenModel } from './user-token';
+import { UserTokenModel, UserTokenMongooseDoc } from './user-token';
 
 export class TokenRepo {
     exists(userId: string, token: string): Promise<boolean> {
@@ -9,9 +9,7 @@ export class TokenRepo {
                 userId
             })
             .exec()
-            .then((res: mongoose.Document) => {
-                return !!res;
-            });
+            .then((res: UserTokenMongooseDoc) => !!res);
     }
 
     storeUserToken(userId: string, token: string): Promise<boolean> {

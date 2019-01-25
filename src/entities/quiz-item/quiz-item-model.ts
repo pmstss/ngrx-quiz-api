@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice';
+import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice-model';
 
 export interface QuizItemUpdate {
     question: string;

@@ -5,6 +5,9 @@ export interface UserToken {
     token: string;
 }
 
+export interface UserTokenMongooseDoc extends UserToken, mongoose.Document {
+}
+
 // tslint:disable-next-line variable-name
 const UserTokenSchema = new mongoose.Schema({
     userId: {
@@ -15,11 +18,12 @@ const UserTokenSchema = new mongoose.Schema({
         }
     },
     token: {
-        type: String,
+        type: mongoose.SchemaTypes.String,
+        maxlength: 4096,
         trim: true,
         required: true
     }
 });
 
 // tslint:disable-next-line variable-name
-export const UserTokenModel = mongoose.model('UserToken', UserTokenSchema);
+export const UserTokenModel = mongoose.model<UserTokenMongooseDoc>('UserToken', UserTokenSchema);

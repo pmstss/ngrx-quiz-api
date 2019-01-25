@@ -3,7 +3,7 @@ import { NextFunction } from 'connect';
 import { AdminQuizRepo } from './admin-quiz-repo';
 import { ApiRequest } from '../../api/api-request';
 import { writeResponse } from '../../api/response-writer';
-import { QuizAdmin } from '../quiz/quiz';
+import { QuizAdmin } from '../quiz/quiz-model';
 
 export class AdminQuizController {
     constructor(private repo: AdminQuizRepo) {

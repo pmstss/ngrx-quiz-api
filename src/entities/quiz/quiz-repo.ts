@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz } from '../quiz/quiz';
+import { QuizModel, Quiz } from './quiz-model';
 import { ApiError } from '../../api/api-error';
 
 export class QuizRepo {
