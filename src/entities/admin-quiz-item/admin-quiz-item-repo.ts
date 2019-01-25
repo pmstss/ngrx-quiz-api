@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem, QuizItemUpdate } from '../quiz-item/quiz-item-model';
+import { QuizItemModel, QuizItem, QuizItemUpdate,
+    QuizItemDoc, QuizItemMongooseDoc } from '../quiz-item/quiz-item-model';
+import { ApiError } from '../../api/api-error';
 
 export class AdminQuizItemRepo {
     getItem(itemId: string): Promise<QuizItem> {
@@ -26,11 +28,16 @@ export class AdminQuizItemRepo {
                 'choices._id': 0
             })
             .exec()
-            .then((res: QuizItem[]) => res[0]);
+            .then((res: QuizItem[]) => {
+                if (res.length) {
+                    return res[0];
+                }
+                throw new ApiError('No such item', 404);
+            });
     }
 
-    createItem(quizId: string, item: QuizItem) {
-        return QuizItemModel.create(<QuizItem>{
+    createItem(quizId: string, item: QuizItem): Promise<QuizItem> {
+        return QuizItemModel.create(<QuizItemDoc>{
             quizId: mongoose.Types.ObjectId(quizId),
             question: item.question,
             choices: item.choices,
@@ -38,10 +45,10 @@ export class AdminQuizItemRepo {
             randomizeChoices: item.randomizeChoices,
             counter: 0,
             order: 0
-        }).then(doc => this.getItem(doc.get('_id')));
+        }).then((doc: QuizItemMongooseDoc) => this.getItem(doc._id));
     }
 
-    updateItem(itemId: string, item: QuizItem) {
+    updateItem(itemId: string, item: QuizItem): Promise<QuizItem> {
         return QuizItemModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(itemId)
@@ -58,6 +65,7 @@ export class AdminQuizItemRepo {
             {
                 new: true
             }
+        // TODO ### typings
         ).exec().then(() => this.getItem(itemId));
     }
 
@@ -66,7 +74,7 @@ export class AdminQuizItemRepo {
             {
                 _id: mongoose.Types.ObjectId(itemId)
             }
-        ).exec();
+        ).exec(); // TODO ### typings
     }
 
     // TODO ### define response type

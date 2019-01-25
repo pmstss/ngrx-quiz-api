@@ -8,15 +8,24 @@ export interface QuizItemChoice {
     correct: boolean;
 }
 
+export interface QuizItemChoiceDoc {
+    counter: number;
+    text: string;
+    explanation: string;
+    correct: boolean;
+}
+
 // tslint:disable-next-line variable-name
 export const QuizItemChoiceSchema = new mongoose.Schema({
     text: {
         type: mongoose.Schema.Types.String,
+        maxlength: 1024,
         required: true,
         trim: true
     },
     explanation: {
         type: mongoose.Schema.Types.String,
+        maxlength: 1024,
         required: false,
         trim: true
     },

@@ -1,4 +1,5 @@
 import { UserWithPassword, UserModel } from './user-model';
+import { ApiError } from '../../api/api-error';
 
 export class AuthRepo {
     getUser(email: string): Promise<UserWithPassword> {
@@ -15,7 +16,12 @@ export class AuthRepo {
                 __v: 0
             })
             .exec()
-            .then((res: UserWithPassword[]) => res[0]);
+            .then((res: UserWithPassword[]) => {
+                if (res.length) {
+                    return res[0];
+                }
+                throw new ApiError('No such user', 404);
+            });
     }
 
     createUser(user: UserWithPassword): Promise<void> {
@@ -26,6 +32,6 @@ export class AuthRepo {
                 password: user.password,
                 admin: false
             }
-        ). then(() => { return; });
+        ).then(() => {});
     }
 }

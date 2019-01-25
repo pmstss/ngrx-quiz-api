@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem } from './quiz-item-model';
+import { QuizItemModel, QuizItem, QuizItemMongooseDoc } from './quiz-item-model';
 import { ApiError } from '../../api/api-error';
 
 export class QuizItemRepo {
-    private aggregateItems(matchQuery: any): mongoose.Aggregate<any> {
+    private aggregateItems(matchQuery: any): mongoose.Aggregate<QuizItem[]> {
         return QuizItemModel
             .aggregate()
             .match(matchQuery)
@@ -47,9 +47,9 @@ export class QuizItemRepo {
     getItem(itemId: string): Promise<QuizItem> {
         return this.aggregateItems({
             _id: mongoose.Types.ObjectId(itemId)
-        }).exec().then((docs: QuizItem[]) => {
-            if (docs.length) {
-                return docs[0];
+        }).exec().then((res: QuizItem[]) => {
+            if (res.length) {
+                return res[0];
             }
             throw new ApiError('No such item', 404);
         });

@@ -52,9 +52,9 @@ export class QuizRepo {
                 items: 0
             })
             .exec()
-            .then((docs: mongoose.Document[]) => {
-                if (docs.length) {
-                    return docs[0];
+            .then((res: Quiz[]) => {
+                if (res.length) {
+                    return res[0];
                 }
                 throw new ApiError('No such quiz', 404);
             });

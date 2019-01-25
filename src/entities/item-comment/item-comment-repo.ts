@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ItemCommentModel, ItemComment, ItemCommentDoc,
     ItemCommentMongooseDoc } from './item-comment-model';
+import { ApiError } from '../../api/api-error';
 
 export class CommentRepo {
     aggregateComments(matchQuery: any): mongoose.Aggregate<ItemCommentMongooseDoc[]> {
@@ -54,7 +55,12 @@ export class CommentRepo {
     getComment(id: string): Promise<ItemComment> {
         return this.aggregateComments({
             _id: mongoose.Types.ObjectId(id)
-        }).exec().then((res: ItemComment[]) => res[0]);
+        }).exec().then((res: ItemComment[]) => {
+            if (res.length) {
+                return res[0];
+            }
+            throw new ApiError('No such comment', 404);
+        });
     }
 
     addComment(comment: ItemCommentDoc): Promise<ItemComment> {

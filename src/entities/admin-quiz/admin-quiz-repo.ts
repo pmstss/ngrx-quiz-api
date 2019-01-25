@@ -80,9 +80,9 @@ export class AdminQuizRepo {
                 'items.choices._id': 0
             })
             .exec()
-            .then((docs: QuizAdmin[]) => {
-                if (docs.length) {
-                    return docs[0];
+            .then((res: QuizAdmin[]) => {
+                if (res.length) {
+                    return res[0];
                 }
                 throw new ApiError('No such quiz', 404);
             });

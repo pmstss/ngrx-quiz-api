@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItemChoice, QuizItemChoiceSchema } from './quiz-item-choice-model';
+import { QuizItemChoice, QuizItemChoiceSchema, QuizItemChoiceDoc } from './quiz-item-choice-model';
 
 export interface QuizItemUpdate {
     question: string;
@@ -8,14 +8,23 @@ export interface QuizItemUpdate {
     singleChoice: boolean;
 }
 
-export class QuizItem implements QuizItemUpdate {
-    quizId: mongoose.Types.ObjectId | string;
-    question: string;
-    choices: QuizItemChoice[];
-    randomizeChoices: boolean;
-    singleChoice: boolean;
+export interface QuizItem extends QuizItemUpdate {
+    quizId: string;
     order: number;
     counter: number;
+}
+
+export interface QuizItemDoc {
+    quizId: mongoose.Types.ObjectId;
+    question: string;
+    randomizeChoices: boolean;
+    singleChoice: boolean;
+    choices: QuizItemChoiceDoc[];
+    order: number;
+    counter: number;
+}
+
+export interface QuizItemMongooseDoc extends QuizItemDoc, mongoose.Document {
 }
 
 // tslint:disable-next-line variable-name
@@ -28,6 +37,7 @@ export const QuizItemSchema = new mongoose.Schema(
         question: {
             type: mongoose.SchemaTypes.String,
             required: true,
+            maxlength: 4096,
             trim: true
         },
         randomizeChoices: {
@@ -53,23 +63,9 @@ export const QuizItemSchema = new mongoose.Schema(
         }
     },
     {
-        collection: 'items'/*,
-        toObject: {
-            // virtuals: false,
-            transform: (doc, ret) => {
-                console.log('### toObject - doc: %o, ret: %o', doc, ret);
-                delete ret.__v;
-            }
-        },
-        toJSON: {
-            // virtuals: false,
-            transform: (doc, ret) => {
-                console.log('### toObject - doc: %o, ret: %o', doc, ret);
-                delete ret.__v;
-            }
-        }*/
+        collection: 'items'
     }
 );
 
 // tslint:disable-next-line variable-name
-export const QuizItemModel = mongoose.model('QuizItem', QuizItemSchema);
+export const QuizItemModel = mongoose.model<QuizItemMongooseDoc>('QuizItem', QuizItemSchema);
