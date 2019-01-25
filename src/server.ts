@@ -14,6 +14,7 @@ import { adminQuizRouter } from './routes/admin-quiz-router';
 import { adminQuizItemRouter } from './routes/admin-quiz-item-router';
 import { commentRouter } from './routes/comment-router';
 import { tempRouter } from './routes/temp-router';
+import { quizItemRouter } from './routes/quiz-item-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -55,6 +56,7 @@ const MongoStore = require('connect-mongo')(session);
     app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);
     app.use('/api/comments', stateGuard, tokenGuard, commentRouter);
     app.use('/api', stateGuard, tokenGuard, quizRouter);
+    app.use('/api', stateGuard, tokenGuard, quizItemRouter);
 
     app.use((req: express.Request, res: express.Response) => {
         res.status(404).send('Not found');

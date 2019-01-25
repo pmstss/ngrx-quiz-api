@@ -1,16 +1,12 @@
 import { Router } from 'express';
-import { QuizController } from '../controllers/quiz-controller';
 import { QuizRepo } from '../db/quiz-repo';
 import { ScoreRepo } from '../db/score-repo';
+import { QuizController } from '../controllers/quiz-controller';
 
 const controller = new QuizController(new QuizRepo(), new ScoreRepo());
 
 export const quizRouter = Router();
 quizRouter.get('/quizes', controller.getQuizList.bind(controller));
 quizRouter.get('/quizes/:shortName', controller.getQuiz.bind(controller));
-quizRouter.get('/items/:itemId', controller.getItem.bind(controller));
-quizRouter.get('/quiz-items/:quizId', controller.getItems.bind(controller));
-quizRouter.post('/answers/:itemId', controller.submitAnswer.bind(controller));
 quizRouter.post('/reset/:quizId', controller.resetQuizState.bind(controller));
-
 quizRouter.get('/top/:quizId', controller.getTopScores.bind(controller));
