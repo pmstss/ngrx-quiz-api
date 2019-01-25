@@ -9,8 +9,8 @@ export interface Quiz {
     descriptionFull: string;
     timeLimit?: number;
     randomizeItems: boolean;
-    totalQuestions: number;
     items?: QuizItem[];
+    itemIds?: QuizItem[];
     started?: boolean;
     finished?: boolean;
 }
@@ -21,12 +21,14 @@ export const QuizSchema = new mongoose.Schema(
         name: {
             type: mongoose.SchemaTypes.String,
             trim: true,
+            maxlength: 128,
             required: true
         },
         shortName: {
             type: mongoose.SchemaTypes.String,
             trim: true,
             required: true,
+            maxlength: 64,
             index: {
                 unique: true
             }
@@ -34,11 +36,13 @@ export const QuizSchema = new mongoose.Schema(
         description: {
             type: mongoose.SchemaTypes.String,
             trim: true,
+            maxlength: 1024,
             required: true
         },
         descriptionFull: {
             type: mongoose.SchemaTypes.String,
             trim: true,
+            maxlength: 2048,
             required: true
         },
         timeLimit: {
