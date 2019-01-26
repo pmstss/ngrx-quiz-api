@@ -1,8 +1,7 @@
-import { Response } from 'express';
-import { NextFunction } from 'connect';
-import { AdminQuizItemRepo } from './admin-quiz-item-repo';
+import { Response, NextFunction } from 'express';
 import { ApiRequest } from '../../api/api-request';
 import { writeResponse } from '../../api/response-writer';
+import { AdminQuizItemRepo } from './admin-quiz-item-repo';
 
 export class AdminQuizItemController {
     constructor(private repo: AdminQuizItemRepo) {

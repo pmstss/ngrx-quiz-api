@@ -1,5 +1,4 @@
-import { Response } from 'express';
-import { NextFunction } from 'connect';
+import { Response, NextFunction } from 'express';
 import { QuizItemRepo } from './quiz-item-repo';
 import { ScoreRepo } from '../score/score-repo';
 import { ApiRequest } from '../../api/api-request';

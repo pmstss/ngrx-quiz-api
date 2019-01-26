@@ -1,12 +1,11 @@
 import * as mongoose from 'mongoose';
-import { Request, Response } from 'express';
-import { NextFunction } from 'connect';
+import { Request, Response, NextFunction } from 'express';
 import { compareSync } from 'bcrypt';
-import { AuthRepo } from './auth-repo';
-import { TokenUtils } from '../../token/token-utils';
 import { writeResponse } from '../../api/response-writer';
 import { ApiError } from '../../api/api-error';
+import { AuthRepo } from './auth-repo';
 import { TokenRepo } from '../token/token-repo';
+import { TokenUtils } from '../../token/token-utils';
 import { TokenData } from '../../token/token-data';
 import { UserModel, UserWithPassword } from './user-model';
 

@@ -1,13 +1,12 @@
-import { Response } from 'express';
-import { NextFunction } from 'connect';
-import { QuizRepo } from './quiz-repo';
-import { ScoreRepo } from '../score/score-repo';
+import { Response, NextFunction } from 'express';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
-import { Quiz, QuizListItem } from './quiz-model';
-import { QuizState, ClientQuizState } from '../../state/quiz-state';
+import { QuizRepo } from './quiz-repo';
+import { ScoreRepo } from '../score/score-repo';
 import { QuizScore } from '../score/score-model';
+import { QuizState, ClientQuizState } from '../../state/quiz-state';
+import { Quiz, QuizListItem } from './quiz-model';
 
 export class QuizController {
     constructor(private repo: QuizRepo, private scoreRepo: ScoreRepo) {

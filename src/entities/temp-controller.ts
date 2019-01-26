@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
-import { Request, Response } from 'express';
-import { NextFunction } from 'connect';
+import { Request, Response, NextFunction } from 'express';
 import { QuizItemModel } from './quiz-item/quiz-item-model';
 
 export class TempController {

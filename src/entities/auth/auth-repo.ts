@@ -1,5 +1,5 @@
-import { UserWithPassword, UserModel } from './user-model';
 import { ApiError } from '../../api/api-error';
+import { UserWithPassword, UserModel } from './user-model';
 
 export class AuthRepo {
     getUser(email: string): Promise<UserWithPassword> {
