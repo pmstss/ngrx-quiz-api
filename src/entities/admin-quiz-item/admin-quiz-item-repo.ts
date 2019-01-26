@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { QuizItemModel, QuizItem, QuizItemUpdate,
     QuizItemDoc, QuizItemMongooseDoc } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
+import { UpdateResult } from '../mongo-types';
 
 export class AdminQuizItemRepo {
     getItem(itemId: string): Promise<QuizItem> {
@@ -65,20 +66,22 @@ export class AdminQuizItemRepo {
             {
                 new: true
             }
-        // TODO ### typings
-        ).exec().then(() => this.getItem(itemId));
+        ).exec().then((doc: QuizItemMongooseDoc) => this.getItem(doc._id));
     }
 
-    deleteItem(itemId: string) {
+    deleteItem(itemId: string): Promise<void> {
         return QuizItemModel.findOneAndRemove(
             {
                 _id: mongoose.Types.ObjectId(itemId)
             }
-        ).exec(); // TODO ### typings
+        ).exec().then((res: QuizItemMongooseDoc) => {
+            if (!res) {
+                throw new ApiError('No such item', 404);
+            }
+        });
     }
 
-    // TODO ### define response type
-    updateQuizItemsOrder(quizId: string, itemIds: string[]) {
+    updateQuizItemsOrder(quizId: string, itemIds: string[]): Promise<void> {
         // TODO ### is it possible to perform in single query?
         return Promise.all(itemIds.map((itemId, idx) => {
             return QuizItemModel.update(
@@ -92,6 +95,10 @@ export class AdminQuizItemRepo {
                     }
                 }
             ).exec();
-        }));
+        })).then((...res: any[]) => {
+            if (!res.every((r: UpdateResult) => !!r.ok)) {
+                throw new ApiError('Order update error', 501);
+            }
+        });
     }
 }

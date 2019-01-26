@@ -21,7 +21,10 @@ export const QuizItemChoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.String,
         maxlength: 1024,
         required: true,
-        trim: true
+        trim: true,
+        index: {
+            unique: true
+        }
     },
     explanation: {
         type: mongoose.Schema.Types.String,

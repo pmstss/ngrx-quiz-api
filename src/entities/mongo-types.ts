@@ -1,4 +1,10 @@
 export interface DeleteResult {
-    ok: boolean;
+    ok: number;
     n: number;
+}
+
+export interface UpdateResult {
+    ok: number;
+    n: number;
+    nModified: number;
 }
