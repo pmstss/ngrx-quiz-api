@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { QuizItemModel, QuizItem, QuizItemMongooseDoc } from './quiz-item-model';
 import { ApiError } from '../../api/api-error';
+import { QuizItemChoice, QuizItemChoiceMongooseDoc } from './quiz-item-choice-model';
 
 export class QuizItemRepo {
     private aggregateItems(matchQuery: any): mongoose.Aggregate<QuizItem[]> {
@@ -55,13 +56,13 @@ export class QuizItemRepo {
         });
     }
 
-    getItems(quizId: string): Promise<QuizItem> {
+    getItems(quizId: string): Promise<QuizItem[]> {
         return this.aggregateItems({
             quizId: mongoose.Types.ObjectId(quizId)
         }).exec();
     }
 
-    submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<any> {
+    submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<QuizItem> {
         const choiceObjectIds = choiceIds.map((id: string) => mongoose.Types.ObjectId(id));
         return QuizItemModel.findOneAndUpdate(
             {
@@ -84,12 +85,15 @@ export class QuizItemRepo {
                 new: true
             }
         ).exec()
-        .then((doc: mongoose.Document) => {
-            (doc as any).choices.forEach((ch: any) => {
-                ch.id = ch._id;
-                delete ch._id;
-            });
-            return doc;
-        });
+        .then((doc: QuizItemMongooseDoc): QuizItem => ({
+            ...doc.toObject(),
+            choices: doc.choices.map((ch: QuizItemChoiceMongooseDoc): QuizItemChoice => ({
+                id: ch._id,
+                counter: ch.counter,
+                text: ch.text,
+                explanation: ch.explanation,
+                correct: ch.correct
+            }))
+        }));
     }
 }

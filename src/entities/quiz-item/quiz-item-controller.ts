@@ -5,7 +5,7 @@ import { ScoreRepo } from '../score/score-repo';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
-import { QuizChoiceAnswerResult } from './quiz-item-answer';
+import { QuizChoiceAnswerResult, QuizItemAnswerResult } from './quiz-item-answer';
 import { QuizItem } from './quiz-item-model';
 import { AnswerResultHelper } from './answer-result-helper';
 
@@ -13,7 +13,7 @@ export class QuizItemController {
     constructor(private repo: QuizItemRepo, private scoreRepo: ScoreRepo) {
     }
 
-    getQuizItems(req: ApiRequest, res: Response, next: NextFunction) {
+    getQuizItems(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizItem[]> {
         const quizId = req.query.quizId;
         if (!req.stateService.hasQuizState(quizId)) {
             throw new ApiError('Quiz is not initialized', 409);
@@ -23,11 +23,11 @@ export class QuizItemController {
             throw new ApiError('Quiz is not finished', 409);
         }
 
-        writeResponse(this.repo.getItems(quizId), req, res, next);
+        return writeResponse(this.repo.getItems(quizId), req, res, next);
     }
 
-    getItem(req: ApiRequest, res: Response, next: NextFunction) {
-        writeResponse(
+    getItem(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizItem> {
+        return writeResponse(
             this.repo.getItem(req.params.itemId)
                 .then((item: QuizItem) => {
                     if (!req.stateService.hasQuizState(item.quizId as string)) {
@@ -53,33 +53,35 @@ export class QuizItemController {
         );
     }
 
-    submitAnswer(req: ApiRequest, res: Response, next: NextFunction) {
+    submitAnswer(req: ApiRequest, res: Response, next: NextFunction):
+            Promise<QuizItemAnswerResult> {
         const quizId = req.body.quizId;
         const itemId = req.params.itemId;
         const userChoiceIds = req.body.choiceIds;
         if (!userChoiceIds || !quizId || !itemId) {
-            writeErrorResponse(res, next, new ApiError('Missing required parameters', 422));
-            return;
+            return writeErrorResponse(res, next, new ApiError('Missing required parameters', 422));
         }
 
         if (!req.stateService.hasQuizState(quizId)) {
-            writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
-        } else if (req.stateService.isAnswered(quizId, itemId)) {
-            writeErrorResponse(res, next, new ApiError('Answer is already submitted', 409));
-        } else {
-            writeResponse(
-                this.repo.submitAnswer(quizId, itemId, userChoiceIds)
-                    .then((doc: QuizItem) => {
-                        const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
-                        req.stateService.addAnswer(quizId, itemId, answerResult);
-
-                        if (req.stateService.isScoreSaveRequired(quizId)) {
-                            this.scoreRepo.saveScore(req.stateService.getQuizScoreDoc(quizId));
-                        }
-
-                        return answerResult;
-                    }),
-                req, res, next);
+            return writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
         }
+
+        if (req.stateService.isAnswered(quizId, itemId)) {
+            return writeErrorResponse(res, next, new ApiError('Answer is already submitted', 409));
+        }
+
+        return writeResponse(
+            this.repo.submitAnswer(quizId, itemId, userChoiceIds)
+                .then((doc: QuizItem) => {
+                    const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
+                    req.stateService.addAnswer(quizId, itemId, answerResult);
+
+                    if (req.stateService.isScoreSaveRequired(quizId)) {
+                        this.scoreRepo.saveScore(req.stateService.getQuizScoreDoc(quizId));
+                    }
+
+                    return answerResult;
+                }),
+            req, res, next);
     }
 }

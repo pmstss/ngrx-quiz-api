@@ -15,6 +15,9 @@ export interface QuizItemChoiceDoc {
     correct: boolean;
 }
 
+export interface QuizItemChoiceMongooseDoc extends QuizItemChoiceDoc, mongoose.Document {
+}
+
 // tslint:disable-next-line variable-name
 export const QuizItemChoiceSchema = new mongoose.Schema({
     text: {

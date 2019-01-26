@@ -28,7 +28,7 @@ const writeSuccessResponse = (req: Request, res: Response,
 };
 
 export const writeErrorResponse = (res: Response, next: NextFunction,
-                                   err: any, status?: number) => {
+                                   err: any, status?: number): null => {
     const statusCode = status || err && err instanceof ApiError && (err as ApiError).status || 400;
     if (statusCode) {
         res.status(statusCode);
@@ -45,4 +45,5 @@ export const writeErrorResponse = (res: Response, next: NextFunction,
     }
 
     res.json(apiResponse);
+    return null;
 };
