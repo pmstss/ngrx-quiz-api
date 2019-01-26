@@ -13,11 +13,11 @@ import { UserModel, UserWithPassword } from './user-model';
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
-    login(req: Request, res: Response, next: NextFunction) {
-        writeResponse(this.loginAux(req.body.email, req.body.password), req, res, next);
+    login(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
+        return writeResponse(this.loginAux(req.body.email, req.body.password), req, res, next);
     }
 
-    private loginAux(email: string, password: string): Promise<any> {
+    private loginAux(email: string, password: string): Promise<{token: string}> {
         return this.repo.getUser(email).then((user: UserWithPassword) => {
             if (user && compareSync(password, user.password)) {
                 const token = TokenUtils.createUserToken(user);
@@ -29,37 +29,35 @@ export class AuthController {
         });
     }
 
-    logout(req: Request, res: Response, next: NextFunction) {
-        writeResponse(
+    logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+        return writeResponse(
             TokenUtils.verifyIgnoringExpiration(TokenUtils.parseFromRequest(req))
                 .then(tokenData =>
                     this.tokenRepo.removeUserToken(tokenData.user.id))
                 .then(() => null)
                 .catch(() => {
                     console.warn('Invalid token for user');
-                    return null;
                 }),
             req, res, next
         );
     }
 
-    register(req: Request, res: Response, next: NextFunction) {
-        writeResponse(
+    register(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
+        return writeResponse(
             this.repo.createUser({
                 id: null,
                 email: req.body.email,
                 fullName: req.body.fullName,
                 password: req.body.password,
                 admin: false
-            })
-            .then(() => this.loginAux(req.body.email, req.body.password)),
-            req, res, next);
+            }).then(() => this.loginAux(req.body.email, req.body.password)),
+            req, res, next
+        );
     }
 
-    refreshToken(req: Request, res: Response, next: NextFunction) {
+    refreshToken(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
         const token = req.body.token;
-
-        writeResponse(
+        return writeResponse(
             TokenUtils.verifyIgnoringExpiration(token)
                 .then(tokenData =>
                     this.tokenRepo.exists(tokenData.user.id, token)
