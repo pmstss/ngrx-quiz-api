@@ -40,14 +40,14 @@ export class QuizController {
         );
     }
 
-    resetQuizState(req: ApiRequest, res: Response, next: NextFunction): void {
+    resetQuizState(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
         const quizState: QuizState = req.stateService.getQuizState(req.params.quizId);
         if (!quizState) {
-            writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
-        } else {
-            req.stateService.resetQuizState(req.params.quizId);
-            writeResponse(Promise.resolve(null), req, res, next);
+            return writeErrorResponse(res, next, new ApiError('Quiz is not initialized', 409));
         }
+
+        req.stateService.resetQuizState(req.params.quizId);
+        return writeResponse(Promise.resolve(), req, res, next);
     }
 
     getTopScores(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizScore[]> {

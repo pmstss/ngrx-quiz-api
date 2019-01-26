@@ -35,7 +35,7 @@ export class AuthController {
                     this.tokenRepo.removeUserToken(tokenData.user.id))
                 .then(() => null)
                 .catch(() => {
-                    console.warn('Invalid token for user');
+                    console.warn('Invalid token for user'); // TODO log somewhere?
                 }),
             req, res, next
         );

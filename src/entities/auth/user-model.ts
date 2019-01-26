@@ -30,7 +30,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         maxlength: 64,
         minlength: 5,
-        asdasd: 5656,
         trim: true,
         required: true
     },

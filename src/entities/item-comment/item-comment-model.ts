@@ -35,7 +35,7 @@ const ItemCommentSchema = new mongoose.Schema({
     text: {
         type: mongoose.SchemaTypes.String,
         trim: true,
-        maxlength: 2048, // TODO ### introduce constrain for other strings
+        maxlength: 2048,
         required: true
     }
 });
