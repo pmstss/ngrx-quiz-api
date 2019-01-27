@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizMeta, QuizMetaAdmin } from 'ngrx-quiz-common';
+import { QuizMetaAdmin, QuizMetaBasic } from 'ngrx-quiz-common';
 import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
 import { QuizItemModel } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
@@ -89,7 +89,7 @@ export class AdminQuizRepo {
             });
     }
 
-    createQuiz(quiz: QuizMeta): Promise<QuizMetaAdmin> {
+    createQuiz(quiz: QuizMetaBasic): Promise<QuizMetaAdmin> {
         return QuizModel.create((<QuizDoc>{
             shortName: quiz.shortName,
             name: quiz.name,
@@ -113,7 +113,7 @@ export class AdminQuizRepo {
         });
     }
 
-    updateQuiz(quizId: string, quiz: QuizMeta): Promise<QuizMetaAdmin> {
+    updateQuiz(quizId: string, quiz: QuizMetaBasic): Promise<QuizMetaAdmin> {
         return QuizModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(quizId)
