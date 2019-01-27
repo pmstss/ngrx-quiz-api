@@ -1,10 +1,10 @@
 import * as mongoose from 'mongoose';
+import { QuizMeta } from 'ngrx-quiz-common';
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
 import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
 import { QuizScoreDoc } from '../entities/score/score-model';
 import { ApiRequest } from '../api/api-request';
-import { Quiz } from '../entities/quiz/quiz-model';
 
 export class StateService {
     private state: SessionState;
@@ -30,7 +30,7 @@ export class StateService {
         return this.state.quizes.hasOwnProperty(quizId);
     }
 
-    initQuizState(quiz: Quiz) {
+    initQuizState(quiz: QuizMeta) {
         if (!this.hasQuizState(quiz.id)) {
             this.state.quizes[quiz.id] = {
                 itemIds: quiz.itemIds,

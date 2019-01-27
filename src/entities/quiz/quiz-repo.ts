@@ -1,9 +1,9 @@
-import * as mongoose from 'mongoose';
-import { QuizModel, Quiz } from './quiz-model';
+import { QuizMeta } from 'ngrx-quiz-common';
+import { QuizModel  } from './quiz-model';
 import { ApiError } from '../../api/api-error';
 
 export class QuizRepo {
-    getQuizList(): Promise<(Quiz & {totalQuestions: number})[]> {
+    getQuizList(): Promise<(QuizMeta & {totalQuestions: number})[]> {
         return QuizModel
             .aggregate()
             .lookup({
@@ -24,7 +24,7 @@ export class QuizRepo {
             .exec();
     }
 
-    getQuiz(shortName: string): Promise<Quiz> {
+    getQuiz(shortName: string): Promise<QuizMeta> {
         return QuizModel
             .aggregate()
             .match({
@@ -52,7 +52,7 @@ export class QuizRepo {
                 items: 0
             })
             .exec()
-            .then((res: Quiz[]) => {
+            .then((res: QuizMeta[]) => {
                 if (res.length) {
                     return res[0];
                 }

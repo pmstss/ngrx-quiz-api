@@ -1,22 +1,22 @@
 import { Response, NextFunction } from 'express';
+import { QuizMeta, QuizMetaListItem, TopScore } from 'ngrx-quiz-common';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
 import { QuizRepo } from './quiz-repo';
 import { ScoreRepo } from '../score/score-repo';
-import { QuizScore } from '../score/score-model';
 import { QuizState, ClientQuizState } from '../../state/quiz-state';
-import { Quiz, QuizListItem } from './quiz-model';
 
 export class QuizController {
     constructor(private repo: QuizRepo, private scoreRepo: ScoreRepo) {
     }
 
-    getQuizList(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizListItem[]> {
+    getQuizList(req: ApiRequest, res: Response, next: NextFunction):
+            Promise<QuizMetaListItem[]> {
         return writeResponse(
             this.repo.getQuizList().then(
-                (quizes: (Quiz & {totalQuestions: number})[]): QuizListItem[] =>
-                quizes.map((quiz: (Quiz & {totalQuestions: number})): QuizListItem => ({
+                (quizes: (QuizMeta & {totalQuestions: number})[]): QuizMetaListItem[] =>
+                quizes.map((quiz: (QuizMeta & {totalQuestions: number})): QuizMetaListItem => ({
                     ...quiz,
                     started: req.stateService.isStarted(quiz.id),
                     finished: req.stateService.isFinished(quiz.id)
@@ -26,10 +26,11 @@ export class QuizController {
         );
     }
 
-    getQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<Quiz & ClientQuizState> {
+    getQuiz(req: ApiRequest, res: Response, next: NextFunction):
+            Promise<QuizMeta & ClientQuizState> {
         return writeResponse(
             this.repo.getQuiz(req.params.shortName)
-                .then((quiz: Quiz): Quiz & ClientQuizState => {
+                .then((quiz: QuizMeta): QuizMeta & ClientQuizState => {
                     req.stateService.initQuizState(quiz);
                     return {
                         ...quiz,
@@ -50,7 +51,7 @@ export class QuizController {
         return writeResponse(Promise.resolve(), req, res, next);
     }
 
-    getTopScores(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizScore[]> {
+    getTopScores(req: ApiRequest, res: Response, next: NextFunction): Promise<TopScore[]> {
         return writeResponse(this.scoreRepo.getTopScores(req.params.quizId), req, res, next);
     }
 }

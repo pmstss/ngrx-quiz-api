@@ -1,11 +1,12 @@
 import * as mongoose from 'mongoose';
-import { QuizModel, Quiz, QuizAdmin, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
+import { QuizMeta, QuizMetaAdmin } from 'ngrx-quiz-common';
+import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
 import { QuizItemModel } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { DeleteResult } from '../mongo-types';
 
 export class AdminQuizRepo {
-    getQuiz(quizId: string): Promise<QuizAdmin> {
+    getQuiz(quizId: string): Promise<QuizMetaAdmin> {
         return QuizModel
             .aggregate()
             .match({
@@ -80,7 +81,7 @@ export class AdminQuizRepo {
                 'items.choices._id': 0
             })
             .exec()
-            .then((res: QuizAdmin[]) => {
+            .then((res: QuizMetaAdmin[]) => {
                 if (res.length) {
                     return res[0];
                 }
@@ -88,7 +89,7 @@ export class AdminQuizRepo {
             });
     }
 
-    createQuiz(quiz: Quiz): Promise<QuizAdmin> {
+    createQuiz(quiz: QuizMeta): Promise<QuizMetaAdmin> {
         return QuizModel.create((<QuizDoc>{
             shortName: quiz.shortName,
             name: quiz.name,
@@ -112,7 +113,7 @@ export class AdminQuizRepo {
         });
     }
 
-    updateQuiz(quizId: string, quiz: Quiz): Promise<QuizAdmin> {
+    updateQuiz(quizId: string, quiz: QuizMeta): Promise<QuizMetaAdmin> {
         return QuizModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(quizId)

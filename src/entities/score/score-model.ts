@@ -1,11 +1,5 @@
 import * as mongoose from 'mongoose';
 
-export interface QuizScore {
-    userName: string;
-    score: number;
-    date: Date;
-}
-
 export interface QuizScoreDoc {
     quizId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;

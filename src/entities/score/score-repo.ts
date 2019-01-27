@@ -1,13 +1,13 @@
 import * as mongoose from 'mongoose';
-import { QuizScoreModel, QuizScore, QuizScoreDoc,
-    QuizScoreMongooseDoc } from './score-model';
+import { TopScore } from 'ngrx-quiz-common';
+import { QuizScoreModel, QuizScoreDoc, QuizScoreMongooseDoc } from './score-model';
 
 export class ScoreRepo {
     saveScore(quizScore: QuizScoreDoc): Promise<string> {
         return QuizScoreModel.create(quizScore).then((res: QuizScoreMongooseDoc) => res._id);
     }
 
-    getTopScores(quizId: string): Promise<QuizScore[]> {
+    getTopScores(quizId: string): Promise<TopScore[]> {
         return QuizScoreModel
             .aggregate()
             .match({

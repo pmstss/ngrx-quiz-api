@@ -1,31 +1,4 @@
 import * as mongoose from 'mongoose';
-import { QuizItem } from '../quiz-item/quiz-item-model';
-
-export interface Quiz {
-    id: string;
-    name: string;
-    shortName: string;
-    description: string;
-    descriptionFull: string;
-    randomizeItems: boolean;
-    itemIds: string[];
-}
-
-export interface QuizAdmin extends Quiz {
-    items: QuizItem[];
-}
-
-export interface QuizListItem {
-    id: string;
-    name: string;
-    shortName: string;
-    description: string;
-    descriptionFull: string;
-    randomizeItems: boolean;
-    totalQuestions: number; // insteadof itemIds
-    started: boolean;
-    finished: boolean;
-}
 
 export interface QuizDoc {
     name: string;
