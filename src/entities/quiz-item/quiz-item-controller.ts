@@ -1,11 +1,12 @@
 import { Response, NextFunction } from 'express';
+import { QuizItem, QuizItemAnswered, QuizItemChoiceAnswer, QuizItemChoice,
+    QuizItemAnswer,
+    QuizItemAdmin} from 'ngrx-quiz-common';
 import { QuizItemRepo } from './quiz-item-repo';
 import { ScoreRepo } from '../score/score-repo';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
-import { QuizChoiceAnswerResult, QuizItemAnswerResult } from './quiz-item-answer';
-import { QuizItem } from './quiz-item-model';
 import { AnswerResultHelper } from './answer-result-helper';
 
 export class QuizItemController {
@@ -25,25 +26,30 @@ export class QuizItemController {
         return writeResponse(this.repo.getItems(quizId), req, res, next);
     }
 
-    getItem(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizItem> {
+    getItem(req: ApiRequest, res: Response, next: NextFunction):
+            Promise<QuizItem | QuizItemAnswered> {
         return writeResponse(
             this.repo.getItem(req.params.itemId)
                 .then((item: QuizItem) => {
-                    if (!req.stateService.hasQuizState(item.quizId as string)) {
+                    if (!req.stateService.hasQuizState(item.quizId)) {
                         throw new ApiError('Quiz is not initialized', 409);
                     }
 
-                    const answers = req.stateService
-                        .getAnswers(item.quizId as string, req.params.itemId);
-                    const choices: QuizChoiceAnswerResult[] = answers ? answers.choices : null;
+                    const itemAnswer: QuizItemAnswer = req.stateService
+                        .getItemAnswer(item.quizId, req.params.itemId);
+                    if (!itemAnswer) {
+                        return item;
+                    }
+
+                    const choices: QuizItemChoiceAnswer[] = itemAnswer.choices || [];
                     return {
                         ...item,
-                        choices: item.choices.map((itemChoice) => {
-                            const choice: QuizChoiceAnswerResult =
+                        choices: item.choices.map((itemChoice: QuizItemChoice) => {
+                            const choice: QuizItemChoiceAnswer =
                                 choices && choices.find(ch => ch.id === itemChoice.id);
                             return {
                                 ...itemChoice,
-                                checked: choice && choice.checked || false
+                                ...choice
                             };
                         })
                     };
@@ -53,7 +59,7 @@ export class QuizItemController {
     }
 
     submitAnswer(req: ApiRequest, res: Response, next: NextFunction):
-            Promise<QuizItemAnswerResult> {
+            Promise<QuizItemAnswer> {
         const quizId = req.body.quizId;
         const itemId = req.params.itemId;
         const userChoiceIds = req.body.choiceIds;
@@ -71,7 +77,7 @@ export class QuizItemController {
 
         return writeResponse(
             this.repo.submitAnswer(quizId, itemId, userChoiceIds)
-                .then((doc: QuizItem) => {
+                .then((doc: QuizItemAdmin) => {
                     const answerResult = AnswerResultHelper.create(userChoiceIds, doc);
                     req.stateService.addAnswer(quizId, itemId, answerResult);
 

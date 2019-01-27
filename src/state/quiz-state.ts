@@ -1,7 +1,7 @@
-import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
+import { QuizItemAnswer } from 'ngrx-quiz-common';
 
 export interface ClientQuizState {
-    answers: { [itemId: string]: QuizItemAnswerResult };
+    answers: { [itemId: string]: QuizItemAnswer };
 }
 
 export interface QuizState extends ClientQuizState {

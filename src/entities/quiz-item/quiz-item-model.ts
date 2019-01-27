@@ -1,18 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItemChoice, QuizItemChoiceSchema, QuizItemChoiceDoc } from './quiz-item-choice-model';
-
-export interface QuizItemUpdate {
-    question: string;
-    choices: QuizItemChoice[];
-    randomizeChoices: boolean;
-    singleChoice: boolean;
-}
-
-export interface QuizItem extends QuizItemUpdate {
-    quizId: string;
-    order: number;
-    counter: number;
-}
+import { QuizItemChoiceSchema, QuizItemChoiceDoc } from './quiz-item-choice-model';
 
 export interface QuizItemDoc {
     quizId: mongoose.Types.ObjectId;

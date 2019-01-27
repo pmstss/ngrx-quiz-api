@@ -1,23 +1,21 @@
 import { ApiError } from '../../api/api-error';
-import { QuizItem } from './quiz-item-model';
-import { QuizItemAnswerResult } from './quiz-item-answer';
-import { QuizItemChoice } from './quiz-item-choice-model';
+import { QuizItemAdmin, QuizItemAnswer, QuizItemChoiceAdmin } from 'ngrx-quiz-common';
 
 export class AnswerResultHelper {
     static arrayEqual(array1: any[], array2: any[]) {
         return [...array1].sort().join(' ') === [...array2].sort().join(' ');
     }
 
-    static create(userChoiceIds: string[], doc: QuizItem): QuizItemAnswerResult {
+    static create(userChoiceIds: string[], doc: QuizItemAdmin): QuizItemAnswer {
         if (!doc) {
             throw new ApiError('Item not found', 404);
         }
 
-        const choices: QuizItemChoice[] = doc.choices;
+        const choices: QuizItemChoiceAdmin[] = doc.choices;
         const totalAnswers = choices.reduce((sum, ch) => sum + ch.counter, 0);
 
         return {
-            choices: choices.map((choice: QuizItemChoice) => {
+            choices: choices.map((choice: QuizItemChoiceAdmin) => {
                 const checked = userChoiceIds.includes(choice.id);
                 return {
                     checked,

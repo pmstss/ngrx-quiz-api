@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem, QuizItemMongooseDoc } from './quiz-item-model';
+import { QuizItem, QuizItemChoiceAdmin, QuizItemAnswered, QuizItemAdmin } from 'ngrx-quiz-common';
+import { QuizItemModel, QuizItemMongooseDoc } from './quiz-item-model';
 import { ApiError } from '../../api/api-error';
-import { QuizItemChoice, QuizItemChoiceMongooseDoc } from './quiz-item-choice-model';
+import { QuizItemChoiceMongooseDoc } from './quiz-item-choice-model';
 
 export class QuizItemRepo {
     private aggregateItems(matchQuery: any): mongoose.Aggregate<QuizItem[]> {
@@ -50,7 +51,10 @@ export class QuizItemRepo {
             _id: mongoose.Types.ObjectId(itemId)
         }).exec().then((res: QuizItem[]) => {
             if (res.length) {
-                return res[0];
+                return {
+                    ...res[0],
+                    choices: res[0].choices.map(ch => ({ ...ch, id: (ch.id as any).toHexString() }))
+                };
             }
             throw new ApiError('No such item', 404);
         });
@@ -59,10 +63,18 @@ export class QuizItemRepo {
     getItems(quizId: string): Promise<QuizItem[]> {
         return this.aggregateItems({
             quizId: mongoose.Types.ObjectId(quizId)
-        }).exec();
+        }).exec().then((res: QuizItem[]) => {
+            if (res.length) {
+                return res.map(r => ({
+                    ...r,
+                    choices: res[0].choices.map(ch => ({ ...ch, id: (ch.id as any).toHexString() }))
+                }));
+            }
+            return res;
+        });
     }
 
-    submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<QuizItem> {
+    submitAnswer(quizId: string, itemId: string, choiceIds: string[]): Promise<QuizItemAdmin> {
         const choiceObjectIds = choiceIds.map((id: string) => mongoose.Types.ObjectId(id));
         return QuizItemModel.findOneAndUpdate(
             {
@@ -85,10 +97,10 @@ export class QuizItemRepo {
                 new: true
             }
         ).exec()
-        .then((doc: QuizItemMongooseDoc): QuizItem => ({
+        .then((doc: QuizItemMongooseDoc): QuizItemAdmin => ({
             ...doc.toObject(),
-            choices: doc.choices.map((ch: QuizItemChoiceMongooseDoc): QuizItemChoice => ({
-                id: ch._id,
+            choices: doc.choices.map((ch: QuizItemChoiceMongooseDoc): QuizItemChoiceAdmin => ({
+                id: ch._id.toHexString(),
                 counter: ch.counter,
                 text: ch.text,
                 explanation: ch.explanation,

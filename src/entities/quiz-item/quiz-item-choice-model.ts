@@ -1,13 +1,5 @@
 import * as mongoose from 'mongoose';
 
-export interface QuizItemChoice {
-    id: string;
-    counter: number;
-    text: string;
-    explanation: string;
-    correct: boolean;
-}
-
 export interface QuizItemChoiceDoc {
     counter: number;
     text: string;

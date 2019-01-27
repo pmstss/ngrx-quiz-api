@@ -55,7 +55,7 @@ export class ScoreRepo {
                 $mergeObjects: [{ $arrayElemAt: ['$users', 0] }, '$$CURRENT']
             })
             .addFields({
-                name: {
+                userName: {
                     $ifNull: ['$fullName', 'Anonymous']
                 }
             })

@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
-import { QuizItemModel, QuizItem, QuizItemUpdate,
-    QuizItemDoc, QuizItemMongooseDoc } from '../quiz-item/quiz-item-model';
+import { QuizItemAdmin } from 'ngrx-quiz-common';
+import { QuizItemModel, QuizItemDoc, QuizItemMongooseDoc } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { UpdateResult } from '../mongo-types';
 
 export class AdminQuizItemRepo {
-    getItem(itemId: string): Promise<QuizItem> {
+    getItem(itemId: string): Promise<QuizItemAdmin> {
         return QuizItemModel
             .aggregate()
             .match({
@@ -29,7 +29,7 @@ export class AdminQuizItemRepo {
                 'choices._id': 0
             })
             .exec()
-            .then((res: QuizItem[]) => {
+            .then((res: QuizItemAdmin[]) => {
                 if (res.length) {
                     return res[0];
                 }
@@ -37,7 +37,7 @@ export class AdminQuizItemRepo {
             });
     }
 
-    createItem(quizId: string, item: QuizItem): Promise<QuizItem> {
+    createItem(quizId: string, item: QuizItemAdmin): Promise<QuizItemAdmin> {
         return QuizItemModel.create(<QuizItemDoc>{
             quizId: mongoose.Types.ObjectId(quizId),
             question: item.question,
@@ -49,13 +49,13 @@ export class AdminQuizItemRepo {
         }).then((doc: QuizItemMongooseDoc) => this.getItem(doc._id));
     }
 
-    updateItem(itemId: string, item: QuizItem): Promise<QuizItem> {
+    updateItem(itemId: string, item: QuizItemAdmin): Promise<QuizItemAdmin> {
         return QuizItemModel.findOneAndUpdate(
             {
                 _id: mongoose.Types.ObjectId(itemId)
             },
             {
-                $set: <QuizItemUpdate>{
+                $set: {
                     question: item.question,
                     choices: item.choices
                         .map(ch => ({ ...ch, _id: mongoose.Types.ObjectId(ch.id) })),
@@ -95,7 +95,7 @@ export class AdminQuizItemRepo {
                     }
                 }
             ).exec();
-        })).then((...res: any[]) => {
+        })).then((res: UpdateResult[]) => {
             if (!res.every((r: UpdateResult) => !!r.ok)) {
                 throw new ApiError('Order update error', 501);
             }

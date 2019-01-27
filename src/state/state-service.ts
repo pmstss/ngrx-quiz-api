@@ -1,8 +1,7 @@
 import * as mongoose from 'mongoose';
-import { QuizMeta } from 'ngrx-quiz-common';
+import { QuizMeta, QuizItemAnswer } from 'ngrx-quiz-common';
 import { QuizState, ClientQuizState } from './quiz-state';
 import { SessionState } from './session-state';
-import { QuizItemAnswerResult } from '../entities/quiz-item/quiz-item-answer';
 import { QuizScoreDoc } from '../entities/score/score-model';
 import { ApiRequest } from '../api/api-request';
 
@@ -77,11 +76,11 @@ export class StateService {
         return quizState.answers.hasOwnProperty(itemId);
     }
 
-    getAnswers(quizId: string, itemId: string): QuizItemAnswerResult {
+    getItemAnswer(quizId: string, itemId: string): QuizItemAnswer {
         return this.getQuizState(quizId).answers[itemId];
     }
 
-    addAnswer(quizId: string, itemId: string, answerResult: QuizItemAnswerResult) {
+    addAnswer(quizId: string, itemId: string, answerResult: QuizItemAnswer) {
         const quizState = this.getQuizState(quizId);
         if (!this.isStarted(quizId)) {
             quizState.startDate = new Date();
