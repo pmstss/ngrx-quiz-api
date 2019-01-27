@@ -1,18 +1,7 @@
+import * as mongoose from 'mongoose';
 import { NextFunction } from 'express';
 import { hashSync } from 'bcrypt';
-import * as mongoose from 'mongoose';
 import { SALT_ROUNDS } from '../../consts/consts';
-
-export interface User {
-    id: string;
-    fullName: string;
-    email: string;
-    admin: boolean;
-}
-
-export interface UserWithPassword extends User {
-    password: string;
-}
 
 export interface UserDoc {
     fullName: string;

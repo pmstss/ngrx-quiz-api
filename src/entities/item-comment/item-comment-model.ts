@@ -1,12 +1,5 @@
 import * as mongoose from 'mongoose';
 
-export interface ItemComment {
-    id: string;
-    userName: string;
-    date: Date;
-    text: string;
-}
-
 export interface ItemCommentDoc {
     userId: string;
     itemId: string;

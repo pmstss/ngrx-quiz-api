@@ -1,19 +1,19 @@
 import { Response, NextFunction } from 'express';
+import { Comment } from 'ngrx-quiz-common';
 import { ApiRequest } from '../../api/api-request';
 import { writeResponse } from '../../api/response-writer';
 import { CommentRepo } from './item-comment-repo';
-import { ItemComment } from './item-comment-model';
 
 export class CommentController {
     constructor(private repo: CommentRepo) {
     }
 
     getComments(req: ApiRequest, res: Response, next: NextFunction):
-            Promise<ItemComment[]> {
+            Promise<Comment[]> {
         return writeResponse(this.repo.getComments(req.params.itemId), req, res, next);
     }
 
-    addComment(req: ApiRequest, res: Response, next: NextFunction): Promise<ItemComment> {
+    addComment(req: ApiRequest, res: Response, next: NextFunction): Promise<Comment> {
         return writeResponse(
             this.repo.addComment({
                 itemId: req.params.itemId,

@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
-import { ItemCommentModel, ItemComment, ItemCommentDoc,
-    ItemCommentMongooseDoc } from './item-comment-model';
+import { Comment } from 'ngrx-quiz-common';
+import { ItemCommentModel, ItemCommentDoc, ItemCommentMongooseDoc } from './item-comment-model';
 import { ApiError } from '../../api/api-error';
 
 export class CommentRepo {
@@ -46,16 +46,16 @@ export class CommentRepo {
             });
     }
 
-    getComments(itemId: string): Promise<ItemComment[]> {
+    getComments(itemId: string): Promise<Comment[]> {
         return this.aggregateComments({
             itemId: mongoose.Types.ObjectId(itemId)
         }).exec();
     }
 
-    getComment(id: string): Promise<ItemComment> {
+    getComment(id: string): Promise<Comment> {
         return this.aggregateComments({
             _id: mongoose.Types.ObjectId(id)
-        }).exec().then((res: ItemComment[]) => {
+        }).exec().then((res: Comment[]) => {
             if (res.length) {
                 return res[0];
             }
@@ -63,7 +63,7 @@ export class CommentRepo {
         });
     }
 
-    addComment(comment: ItemCommentDoc): Promise<ItemComment> {
+    addComment(comment: ItemCommentDoc): Promise<Comment> {
         return ItemCommentModel.create(
             {
                 itemId: mongoose.Types.ObjectId(comment.itemId),

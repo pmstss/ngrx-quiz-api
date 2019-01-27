@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { NextFunction } from 'connect';
-import { ApiResponse } from './api-response';
+import { ApiResponse } from 'ngrx-quiz-common';
 import { ApiError } from './api-error';
 
 const MAX_ERROR_LENGTH = 200;
@@ -8,7 +8,7 @@ const MAX_ERROR_LENGTH = 200;
 export const writeResponse = <T>(dataPromise: Promise<T>, req: Request,
                                  res: Response, next: NextFunction): Promise<T> => {
     return dataPromise
-        .then((data: any) => {
+        .then((data: T) => {
             writeSuccessResponse(req, res, next, data);
         })
         .catch((err) => {
@@ -17,9 +17,9 @@ export const writeResponse = <T>(dataPromise: Promise<T>, req: Request,
         .then(() => dataPromise); // for type checking in contollers
 };
 
-const writeSuccessResponse = (req: Request, res: Response,
-                              next: NextFunction, data: any) => {
-    const apiResponse: ApiResponse = {
+const writeSuccessResponse = <T>(req: Request, res: Response,
+                                 next: NextFunction, data: T) => {
+    const apiResponse: ApiResponse<T> = {
         data,
         success: true
     };
@@ -34,7 +34,7 @@ export const writeErrorResponse = (res: Response, next: NextFunction,
         res.status(statusCode);
     }
 
-    const apiResponse: ApiResponse = {
+    const apiResponse: ApiResponse<void> = {
         success: false,
         message: err.message || err
     };

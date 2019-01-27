@@ -1,13 +1,14 @@
 import * as mongoose from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { compareSync } from 'bcrypt';
+import { UserWithPassword } from 'ngrx-quiz-common';
 import { writeResponse } from '../../api/response-writer';
 import { ApiError } from '../../api/api-error';
 import { AuthRepo } from './auth-repo';
 import { TokenRepo } from '../token/token-repo';
 import { TokenUtils } from '../../token/token-utils';
 import { TokenData } from '../../token/token-data';
-import { UserModel, UserWithPassword } from './user-model';
+import { UserModel } from './user-model';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}

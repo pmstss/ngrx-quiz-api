@@ -1,5 +1,6 @@
+import { UserWithPassword } from 'ngrx-quiz-common';
 import { ApiError } from '../../api/api-error';
-import { UserWithPassword, UserModel } from './user-model';
+import { UserModel } from './user-model';
 
 export class AuthRepo {
     getUser(email: string): Promise<UserWithPassword> {

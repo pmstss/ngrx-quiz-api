@@ -1,6 +1,6 @@
 import { Request } from 'express';
+import { User } from 'ngrx-quiz-common';
 import { sign, verify, VerifyErrors } from 'jsonwebtoken';
-import { User } from '../entities/auth/user-model';
 import { JWT_SECRET_KEY } from '../consts/consts';
 import { TokenData } from './token-data';
 import { ApiError } from '../api/api-error';
