@@ -36,6 +36,7 @@ export class CommentRepo {
                 id: '$_id',
                 userName: '$fullName'
             })
+            .sort({ date: -1 })
             .project({
                 userId: 0,
                 itemId: 0,
