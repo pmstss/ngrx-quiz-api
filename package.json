@@ -57,7 +57,7 @@
     "mocha": "^5.2.0",
     "mongoose": "^5.4.2",
     "morgan": "^1.9.1",
-    "ngrx-quiz-common": "0.0.2",
+    "ngrx-quiz-common": "^0.0.3",
     "node-fetch": "^2.3.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.9.1",
