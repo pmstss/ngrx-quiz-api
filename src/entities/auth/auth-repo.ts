@@ -1,13 +1,13 @@
-import { UserWithPassword } from 'ngrx-quiz-common';
-import { ApiError } from '../../api/api-error';
-import { UserModel } from './user-model';
+import { UserWithPassword, User } from 'ngrx-quiz-common';
+import { UserModel, UserDocMongoose } from './user-model';
 
 export class AuthRepo {
-    getUser(email: string): Promise<UserWithPassword> {
+    getUser(email: string, social: string = null): Promise<UserWithPassword> {
         return UserModel
             .aggregate()
             .match({
-                email
+                email,
+                social
             })
             .addFields({
                 id: '$_id'
@@ -17,22 +17,24 @@ export class AuthRepo {
                 __v: 0
             })
             .exec()
-            .then((res: UserWithPassword[]) => {
-                if (res.length) {
-                    return res[0];
-                }
-                throw new ApiError('No such user', 404);
-            });
+            .then((res: UserWithPassword[]) => res[0]);
     }
 
-    createUser(user: UserWithPassword): Promise<void> {
+    createUser(user: UserWithPassword): Promise<User> {
         return UserModel.create(
             {
                 fullName: user.fullName,
                 email: user.email,
                 password: user.password,
+                social: user.social,
                 admin: false
             }
-        ).then(() => {});
+        ).then((userDoc: UserDocMongoose) => ({
+            id: userDoc.id,
+            fullName: userDoc.fullName,
+            email: userDoc.email,
+            admin: userDoc.admin,
+            social: userDoc.social
+        }));
     }
 }

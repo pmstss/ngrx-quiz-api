@@ -15,12 +15,20 @@ import { adminQuizItemRouter } from './entities/admin-quiz-item/admin-quiz-item-
 import { itemCommentRouter } from './entities/item-comment/item-comment-router';
 import { tempRouter } from './entities/temp-router';
 import { quizItemRouter } from './entities/quiz-item/quiz-item-router';
+import { oauthRouter } from './entities/oauth/oauth-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
 
 (async () => {
-    const connection = await dbConnect();
+    let connection;
+    try {
+        connection = await dbConnect();
+    } catch (e) {
+        console.error('db connection error');
+        process.exit(-2);
+    }
+
     const app = express();
 
     app.set('json spaces', 4);
@@ -51,6 +59,7 @@ const MongoStore = require('connect-mongo')(session);
     }));
 
     app.use('/auth', authRouter);
+    app.use('/oauth', oauthRouter);
     app.use('/temp', tempRouter);
     app.use('/api/admin/quizes', tokenGuard, adminQuizRouter);
     app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);

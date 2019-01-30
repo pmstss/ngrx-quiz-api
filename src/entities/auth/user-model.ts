@@ -8,6 +8,7 @@ export interface UserDoc {
     email: string;
     password: string;
     admin: boolean;
+    social: string;
 }
 
 export interface UserDocMongoose extends UserDoc, mongoose.Document {
@@ -35,7 +36,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: mongoose.SchemaTypes.String,
         trim: true,
-        minlength: 32,
+        minlength: 8,
         maxlength: 64,
         required: true
     },
@@ -44,6 +45,12 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         required: true,
         default: false
+    },
+    social: {
+        type: mongoose.SchemaTypes.String,
+        trim: true,
+        maxlength: 10,
+        required: true
     }
 });
 

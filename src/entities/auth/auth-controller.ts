@@ -49,7 +49,8 @@ export class AuthController {
                 email: req.body.email,
                 fullName: req.body.fullName,
                 password: req.body.password,
-                admin: false
+                admin: false,
+                social: null
             }).then(() => this.loginAux(req.body.email, req.body.password)),
             req, res, next
         );
