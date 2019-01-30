@@ -31,8 +31,8 @@ export class TokenUtils {
         return token && token.startsWith('Bearer ') ? token.substr('Bearer '.length) : token;
     }
 
-    static verifyCallback(resolve: (tokenData: TokenData) => void, reject: (err: any) => void,
-                          err: VerifyErrors, tokenData: TokenData) {
+    private static verifyCallback(resolve: (tokenData: TokenData) => void, reject: (err: any) => void,
+                                  err: VerifyErrors, tokenData: TokenData) {
         if (err) {
             reject(err);
         } else {
@@ -44,7 +44,7 @@ export class TokenUtils {
         }
     }
 
-    static verify(token: string): Promise<object | string> {
+    static verify(token: string): Promise<TokenData> {
         return new Promise((resolve, reject) => {
             verify(
                 token,
