@@ -10,7 +10,8 @@ export class CommentController {
 
     getComments(req: ApiRequest, res: Response, next: NextFunction):
             Promise<Comment[]> {
-        return writeResponse(this.repo.getComments(req.params.itemId), req, res, next);
+        const offset = +req.query.offset ? +req.query.offset : 0;
+        return writeResponse(this.repo.getComments(req.params.itemId, offset), req, res, next);
     }
 
     addComment(req: ApiRequest, res: Response, next: NextFunction): Promise<Comment> {

@@ -2,9 +2,10 @@ import * as mongoose from 'mongoose';
 import { Comment } from 'ngrx-quiz-common';
 import { ItemCommentModel, ItemCommentDoc, ItemCommentMongooseDoc } from './item-comment-model';
 import { ApiError } from '../../api/api-error';
+import { COMMENTS_PER_PAGE } from '../../consts/consts';
 
 export class CommentRepo {
-    aggregateComments(matchQuery: any): mongoose.Aggregate<ItemCommentMongooseDoc[]> {
+    aggregateComments(matchQuery: any, offset: number = 0): mongoose.Aggregate<ItemCommentMongooseDoc[]> {
         return ItemCommentModel
             .aggregate()
             .match(matchQuery)
@@ -37,6 +38,8 @@ export class CommentRepo {
                 userName: '$fullName'
             })
             .sort({ date: -1 })
+            .skip(offset)
+            .limit(COMMENTS_PER_PAGE)
             .project({
                 userId: 0,
                 itemId: 0,
@@ -47,10 +50,13 @@ export class CommentRepo {
             });
     }
 
-    getComments(itemId: string): Promise<Comment[]> {
-        return this.aggregateComments({
-            itemId: mongoose.Types.ObjectId(itemId)
-        }).exec();
+    getComments(itemId: string, offset: number): Promise<Comment[]> {
+        return this.aggregateComments(
+            {
+                itemId: mongoose.Types.ObjectId(itemId)
+            },
+            offset
+        ).exec();
     }
 
     getComment(id: string): Promise<Comment> {

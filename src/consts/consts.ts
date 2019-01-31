@@ -1,3 +1,5 @@
+export const COMMENTS_PER_PAGE = 10;
+
 export const SALT_ROUNDS = 3;
 
 export const BASE_URL = process.env.BASE_URL;
