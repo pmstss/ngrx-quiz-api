@@ -33,7 +33,7 @@ export class OAuthController {
         const code = req.query.code;
 
         if (!code) {
-            return writeErrorResponse(res, next, new ApiError('No code in Google response', 400));
+            return writeErrorResponse(res, next, new ApiError('No code in Google response', 422));
         }
 
         const params = new URLSearchParams();
@@ -48,9 +48,8 @@ export class OAuthController {
             body: params
         })
             .then((response: any) => response.json())
-            .then((tokenResponse: GoogleAccessResponse) => {
-                return fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${tokenResponse.id_token}`);
-            })
+            .then((tokenResponse: GoogleAccessResponse) =>
+                fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${tokenResponse.id_token}`))
             .then((response: any) => response.json())
             .then((tokenInfo: GoogleTokenInfo) => this.tokenRepo.storeOauthToken(tokenInfo, OAuthType.GOOGLE))
             .then((user: UserWithPassword) => this.createUser(user))
@@ -58,8 +57,7 @@ export class OAuthController {
                 const token = TokenUtils.createUserToken(user);
                 return this.tokenRepo.storeUserToken(user.id, token).then(() => token);
             })
-            .then((token: string) =>
-                res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
+            .then((token: string) => res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
             .catch((err: any) => {
                 console.error(err);
                 writeErrorResponse(res, next, new ApiError('OAuth Error', 400));
@@ -70,7 +68,7 @@ export class OAuthController {
         const code = req.query.code;
 
         if (!code) {
-            return writeErrorResponse(res, next, new ApiError('No code in GitHub response', 400));
+            return writeErrorResponse(res, next, new ApiError('No code in GitHub response', 422));
         }
 
         const params = new URLSearchParams();
@@ -82,10 +80,8 @@ export class OAuthController {
         fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
             body: params
-        }).then((response: any) => {
-            console.log(response);
-            return response.text();
-        }).then((text: string) => text.split('&').reduce(
+        }).then((response: any) => response.text())
+        .then((text: string) => text.split('&').reduce(
             (res: any, item: string) => {
                 const [key, value] = item.split('=');
                 res[key] = value;
@@ -93,8 +89,7 @@ export class OAuthController {
             },
             {}
         )).then((tokenResponse: GitHubAccessResponse) =>
-            fetch(`https://api.github.com/user?access_token=${tokenResponse.access_token}`)
-        )
+            fetch(`https://api.github.com/user?access_token=${tokenResponse.access_token}`))
         .then((response: any) => response.json())
         .then((tokenInfo: GitHubTokenInfo) => this.tokenRepo.storeOauthToken(tokenInfo, OAuthType.GITHUB))
         .then((user: UserWithPassword) => this.createUser(user))
@@ -102,8 +97,7 @@ export class OAuthController {
             const token = TokenUtils.createUserToken(user);
             return this.tokenRepo.storeUserToken(user.id, token).then(() => token);
         })
-        .then((token: string) =>
-            res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
+        .then((token: string) => res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
         .catch((err: any) => {
             console.error(err);
             writeErrorResponse(res, next, new ApiError('OAuth Error', 400));
