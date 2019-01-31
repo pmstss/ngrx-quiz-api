@@ -7,5 +7,6 @@ const controller = new OAuthController(new TokenRepo(), new AuthRepo());
 
 const router = Router();
 router.get('/google', controller.google.bind(controller));
+router.get('/github', controller.github.bind(controller));
 
 export const oauthRouter = router;

@@ -13,7 +13,6 @@ if (!CORS_ORIGIN) {
 }
 
 export const DB_URL = process.env.DB_URL;
-console.log(DB_URL);
 if (!DB_URL) {
     console.error('DB_URL env variable must be set');
     process.exit(-1);
@@ -46,5 +45,17 @@ if (!OAUTH_GOOGLE_CLIENT_ID) {
 export const OAUTH_GOOGLE_CLIENT_SECRET = process.env.OAUTH_GOOGLE_CLIENT_SECRET;
 if (!OAUTH_GOOGLE_CLIENT_SECRET) {
     console.error('OAUTH_GOOGLE_CLIENT_SECRET env variable must be set');
+    process.exit(-1);
+}
+
+export const OAUTH_GITHUB_CLIENT_ID = process.env.OAUTH_GITHUB_CLIENT_ID;
+if (!OAUTH_GITHUB_CLIENT_ID) {
+    console.error('OAUTH_GITHUB_CLIENT_ID env variable must be set');
+    process.exit(-1);
+}
+
+export const OAUTH_GITHUB_CLIENT_SECRET = process.env.OAUTH_GITHUB_CLIENT_SECRET;
+if (!OAUTH_GITHUB_CLIENT_SECRET) {
+    console.error('OAUTH_GITHUB_CLIENT_SECRET env variable must be set');
     process.exit(-1);
 }
