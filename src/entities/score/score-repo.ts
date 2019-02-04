@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { TopScore } from 'ngrx-quiz-common';
+import { TopScore, QuizPosition } from 'ngrx-quiz-common';
 import { QuizScoreModel, QuizScoreDoc, QuizScoreMongooseDoc } from './score-model';
 
 export class ScoreRepo {
@@ -67,5 +67,32 @@ export class ScoreRepo {
                 fullName: 0
             })
             .exec();
+    }
+
+    getQuizPosition(quizId: string, score: number) : Promise<QuizPosition> {
+        return QuizScoreModel
+            .aggregate()
+            .match({
+                quizId: mongoose.Types.ObjectId(quizId)
+            })
+            .facet({
+                scoreBuckets: [{
+                    $bucket: {
+                        groupBy: '$score',
+                        boundaries: [0, score + 0.01],
+                        default: 'greater',
+                        output: {
+                            count: { $sum: 1 }
+                        }
+                    }
+                }]
+            })
+            .then((res: any) => {
+                const scoreBuckets = res && res[0] && res[0].scoreBuckets;
+                return {
+                    better: scoreBuckets && scoreBuckets[0] && scoreBuckets[0].count || 0,
+                    worse: scoreBuckets && scoreBuckets[1] && scoreBuckets[1].count || 0
+                };
+            });
     }
 }
