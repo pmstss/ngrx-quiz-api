@@ -4,11 +4,10 @@ import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
 import { QuizRepo } from './quiz-repo';
-import { ScoreRepo } from '../score/score-repo';
 import { QuizState, ClientQuizState } from '../../state/quiz-state';
 
 export class QuizController {
-    constructor(private repo: QuizRepo, private scoreRepo: ScoreRepo) {
+    constructor(private repo: QuizRepo) {
     }
 
     getQuizList(req: ApiRequest, res: Response, next: NextFunction):
@@ -49,9 +48,5 @@ export class QuizController {
 
         req.stateService.resetQuizState(req.params.quizId);
         return writeResponse(Promise.resolve(), req, res, next);
-    }
-
-    getTopScores(req: ApiRequest, res: Response, next: NextFunction): Promise<TopScore[]> {
-        return writeResponse(this.scoreRepo.getTopScores(req.params.quizId), req, res, next);
     }
 }

@@ -16,6 +16,7 @@ import { itemCommentRouter } from './entities/item-comment/item-comment-router';
 import { tempRouter } from './entities/temp-router';
 import { quizItemRouter } from './entities/quiz-item/quiz-item-router';
 import { oauthRouter } from './entities/oauth/oauth-router';
+import { quizScoreRouter } from './entities/score/score-router';
 
 // tslint:disable-next-line variable-name
 const MongoStore = require('connect-mongo')(session);
@@ -66,6 +67,7 @@ const MongoStore = require('connect-mongo')(session);
     app.use('/api/comments', stateGuard, tokenGuard, itemCommentRouter);
     app.use('/api/quizes', stateGuard, tokenGuard, quizRouter);
     app.use('/api/items', stateGuard, tokenGuard, quizItemRouter);
+    app.use('/api/scores', stateGuard, tokenGuard, quizScoreRouter);
 
     app.use((req: express.Request, res: express.Response) => {
         res.status(404).send('Not found');
