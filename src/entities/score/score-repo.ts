@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { TopScore, QuizPosition } from 'ngrx-quiz-common';
 import { QuizScoreModel, QuizScoreDoc, QuizScoreMongooseDoc } from './score-model';
+import { BucketResult } from '../mongo-types';
 
 export class ScoreRepo {
     saveScore(quizScore: QuizScoreDoc): Promise<string> {
@@ -80,19 +81,23 @@ export class ScoreRepo {
                     $bucket: {
                         groupBy: '$score',
                         boundaries: [0, score + 0.01],
-                        default: 'greater',
+                        default: 'outOfRange',
                         output: {
                             count: { $sum: 1 }
                         }
                     }
                 }]
             })
-            .then((res: any) => {
-                const scoreBuckets = res && res[0] && res[0].scoreBuckets;
-                return {
-                    better: scoreBuckets && scoreBuckets[0] && scoreBuckets[0].count || 0,
-                    worse: scoreBuckets && scoreBuckets[1] && scoreBuckets[1].count || 0
-                };
-            });
+            .unwind('$scoreBuckets')
+            .replaceRoot({
+                $mergeObjects: ['$scoreBuckets', '$$ROOT']
+            })
+            .project({
+                scoreBuckets: 0
+            })
+            .then((buckets: BucketResult[]) => ({
+                better: buckets && buckets[0] && buckets[0].count || 0,
+                worse: buckets && buckets[1] && buckets[1].count || 0
+            }));
     }
 }

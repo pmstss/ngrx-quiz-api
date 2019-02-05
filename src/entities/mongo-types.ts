@@ -8,3 +8,8 @@ export interface UpdateResult {
     n: number;
     nModified: number;
 }
+
+export interface BucketResult {
+    _id: number | string;
+    count: number;
+}
