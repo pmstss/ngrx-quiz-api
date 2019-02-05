@@ -61,14 +61,23 @@ export class StateService {
         };
     }
 
-    isStarted(quizId: string): boolean {
+    getAnsweredCount(quizId: string): number {
         const quizState = this.getQuizState(quizId);
-        return !!quizState && Object.keys(quizState.answers).length > 0;
+        return quizState ? Object.keys(quizState.answers).length : 0;
+    }
+
+    getTotalQuestions(quizId: string): number {
+        const quizState = this.getQuizState(quizId);
+        return quizState ? quizState.itemIds.length : 0;
+    }
+
+    isStarted(quizId: string): boolean {
+        return this.getAnsweredCount(quizId) > 0;
     }
 
     isFinished(quizId: string): boolean {
-        const quizState = this.getQuizState(quizId);
-        return !!quizState && Object.keys(quizState.answers).length === quizState.itemIds.length;
+        const total = this.getTotalQuestions(quizId);
+        return total > 0 && this.getAnsweredCount(quizId) === total;
     }
 
     isAnswered(quizId: string, itemId: string): boolean {
