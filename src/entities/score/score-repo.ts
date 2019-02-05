@@ -100,4 +100,41 @@ export class ScoreRepo {
                 worse: buckets && buckets[1] && buckets[1].count || 0
             }));
     }
+
+    getQuizScoreStats(quizId: string, totalQuestions: number) : Promise<number[]> {
+        const boundaries = [];
+        for (let i = 0, delta = 1 / totalQuestions; i <= totalQuestions; ++i) {
+            boundaries.push(delta * i);
+        }
+        console.log(boundaries);
+
+        return QuizScoreModel
+            .aggregate()
+            .match({
+                quizId: mongoose.Types.ObjectId(quizId)
+            })
+            .facet({
+                scoreBuckets: [{
+                    $bucket: {
+                        boundaries,
+                        groupBy: '$score',
+                        default: 'outOfRange'
+                    }
+                }]
+            })
+            .addFields({
+                counters: {
+                    $map: {
+                        input: '$scoreBuckets',
+                        as: 'x',
+                        in: '$$x.count'
+                    }
+                }
+            })
+            .project({
+                scoreBuckets: 0
+            })
+            .then((res: any) => res[0] && res[0].counters);
+    }
+
 }

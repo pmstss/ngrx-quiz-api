@@ -25,13 +25,27 @@ export class ScoreController {
 
         const state = req.stateService.getQuizState(quizId);
         const percentScore = state.score / state.itemIds.length;
+        return writeResponse(
+            this.repo.getQuizPosition(quizId, percentScore).then((quizPosition: QuizPosition): QuizScore => ({
+                ...quizPosition,
+                score: percentScore
+            })),
+            req, res, next
+        );
+    }
+
+    getQuizScoreStats(req: ApiRequest, res: Response, next: NextFunction): Promise<number[]> {
+        const quizId = req.params.quizId;
+        if (!req.stateService.hasQuizState(quizId)) {
+            throw new ApiError('Quiz is not initialized', 409);
+        }
+
+        if (!req.stateService.isFinished(quizId)) {
+            throw new ApiError('Quiz is not finished', 409);
+        }
 
         return writeResponse(
-            this.repo.getQuizPosition(req.params.quizId, percentScore)
-                .then((quizPosition: QuizPosition): QuizScore => ({
-                    ...quizPosition,
-                    score: percentScore
-                })),
+            this.repo.getQuizScoreStats(req.params.quizId, req.stateService.getTotalQuestions(quizId)),
             req, res, next
         );
     }
