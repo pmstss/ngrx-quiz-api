@@ -6,6 +6,9 @@ export interface QuizDoc {
     description: string;
     descriptionFull: string;
     randomizeItems: boolean;
+    userId: string;
+    published: boolean;
+    public: boolean;
 }
 
 export interface QuizMongooseDoc extends QuizDoc, mongoose.Document {
@@ -42,6 +45,18 @@ export const QuizSchema = new mongoose.Schema(
             required: true
         },
         randomizeItems: {
+            type: mongoose.SchemaTypes.Boolean,
+            required: true
+        },
+        userId: {
+            type: mongoose.SchemaTypes.ObjectId,
+            required: true
+        },
+        published: {
+            type: mongoose.SchemaTypes.Boolean,
+            required: true
+        },
+        public: {
             type: mongoose.SchemaTypes.Boolean,
             required: true
         }
