@@ -9,6 +9,7 @@ export interface UserDoc {
     password: string;
     admin: boolean;
     social: string;
+    anonymous: boolean;
 }
 
 export interface UserDocMongoose extends UserDoc, mongoose.Document {
@@ -42,7 +43,6 @@ const UserSchema = new mongoose.Schema({
     },
     admin: {
         type: mongoose.SchemaTypes.Boolean,
-        trim: true,
         required: true,
         default: false
     },
@@ -51,6 +51,11 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         maxlength: 10,
         required: true
+    },
+    anonymous: {
+        type: mongoose.SchemaTypes.Boolean,
+        required: true,
+        default: false
     }
 });
 

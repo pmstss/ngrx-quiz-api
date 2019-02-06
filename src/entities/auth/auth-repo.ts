@@ -27,14 +27,16 @@ export class AuthRepo {
                 email: user.email,
                 password: user.password,
                 social: user.social,
-                admin: false
+                admin: false,
+                anonymous: user.anonymous
             }
         ).then((userDoc: UserDocMongoose) => ({
             id: userDoc.id,
             fullName: userDoc.fullName,
             email: userDoc.email,
             admin: userDoc.admin,
-            social: userDoc.social
+            social: userDoc.social,
+            anonymous: userDoc.anonymous
         }));
     }
 }

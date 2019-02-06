@@ -54,7 +54,8 @@ export class TokenRepo {
                 social,
                 id: null,
                 password: this.generatePassword(),
-                admin: false
+                admin: false,
+                anonymous: false
             };
         });
     }

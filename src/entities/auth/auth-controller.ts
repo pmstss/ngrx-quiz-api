@@ -50,7 +50,8 @@ export class AuthController {
                 fullName: req.body.fullName,
                 password: req.body.password,
                 admin: false,
-                social: null
+                social: null,
+                anonymous: false
             }).then(() => this.loginAux(req.body.email, req.body.password)),
             req, res, next
         );
@@ -75,6 +76,29 @@ export class AuthController {
                 }),
             req, res, next
         );
+    }
+
+    anonymousLogin(req: Request, res: Response, next: NextFunction) {
+        const email = `anonym${Math.round(Math.random() * 1000000)}@checkme.pro`;
+        writeResponse(
+            this.repo.createUser({
+                email,
+                id: null,
+                fullName: 'Anonymous',
+                password: 'anonym',
+                admin: false,
+                social: null,
+                anonymous: true
+            })
+            .then(() => {
+                return this.repo.getUser(email);
+            })
+            .then((user: UserWithPassword) => {
+                const token = TokenUtils.createUserToken(user);
+                return this.tokenRepo.storeUserToken(user.id, token)
+                    .then(() => ({ token }));
+            }),
+            req, res, next);
     }
 
     // TODO ### REMOVE temp implementation!
