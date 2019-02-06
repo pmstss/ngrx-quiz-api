@@ -65,7 +65,7 @@ const MongoStore = require('connect-mongo')(session);
     app.use('/api/admin/quizes', tokenGuard, adminQuizRouter);
     app.use('/api/admin/items', tokenGuard, adminQuizItemRouter);
     app.use('/api/comments', stateGuard, tokenGuard, itemCommentRouter);
-    app.use('/api/quizes', stateGuard, tokenGuard, quizRouter);
+    app.use('/api/quizes', stateGuard, quizRouter); // tokenGuard is inside router - not for all routes
     app.use('/api/items', stateGuard, tokenGuard, quizItemRouter);
     app.use('/api/scores', stateGuard, tokenGuard, quizScoreRouter);
 
