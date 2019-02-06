@@ -131,14 +131,11 @@ export class ScoreRepo {
                 scoreBuckets: 0
             })
             .then((buckets: BucketResult[]) => {
+                const total = buckets.reduce((sum: number, b: BucketResult) => sum + b.count, 0);
                 return boundaries.slice(0, boundaries.length - 1).map((item: number) => {
-                    const bucket = buckets.find((b: BucketResult) => {
-                        console.log(item, b._id, b, b._id === item);
-                        return b._id === item;
-                    });
-                    return bucket ? bucket.count : 0;
+                    const bucket = buckets.find((b: BucketResult) => b._id === item);
+                    return bucket ? bucket.count / total : 0;
                 });
             });
     }
-
 }
