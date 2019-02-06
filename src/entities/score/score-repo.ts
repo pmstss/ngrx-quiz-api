@@ -102,10 +102,11 @@ export class ScoreRepo {
     }
 
     getQuizScoreStats(quizId: string, totalQuestions: number) : Promise<number[]> {
-        const boundaries = [];
-        for (let i = 0, delta = 1 / totalQuestions; i <= totalQuestions; ++i) {
+        const boundaries = [0, 0.01]; // special bucket for zero score
+        for (let i = 1, delta = 1 / totalQuestions; i <= totalQuestions; ++i) {
             boundaries.push(delta * i);
         }
+        boundaries[boundaries.length - 1] += 0.01; // to avoid outOfRange for 1.0 score
         console.log(boundaries);
 
         return QuizScoreModel
@@ -122,19 +123,22 @@ export class ScoreRepo {
                     }
                 }]
             })
-            .addFields({
-                counters: {
-                    $map: {
-                        input: '$scoreBuckets',
-                        as: 'x',
-                        in: '$$x.count'
-                    }
-                }
+            .unwind('$scoreBuckets')
+            .replaceRoot({
+                $mergeObjects: ['$scoreBuckets', '$$ROOT']
             })
             .project({
                 scoreBuckets: 0
             })
-            .then((res: any) => res[0] && res[0].counters);
+            .then((buckets: BucketResult[]) => {
+                return boundaries.slice(0, boundaries.length - 1).map((item: number) => {
+                    const bucket = buckets.find((b: BucketResult) => {
+                        console.log(item, b._id, b, b._id === item);
+                        return b._id === item;
+                    });
+                    return bucket ? bucket.count : 0;
+                });
+            });
     }
 
 }
