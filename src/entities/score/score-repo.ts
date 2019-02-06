@@ -107,7 +107,6 @@ export class ScoreRepo {
             boundaries.push(delta * i);
         }
         boundaries[boundaries.length - 1] += 0.01; // to avoid outOfRange for 1.0 score
-        console.log(boundaries);
 
         return QuizScoreModel
             .aggregate()
