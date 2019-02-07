@@ -85,7 +85,7 @@ export class AuthController {
                 email,
                 id: null,
                 fullName: 'Anonymous',
-                password: 'anonym',
+                password: 'anonymous',
                 admin: false,
                 social: null,
                 anonymous: true

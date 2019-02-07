@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         trim: true,
         maxlength: 10,
-        required: true
+        required: false
     },
     anonymous: {
         type: mongoose.SchemaTypes.Boolean,
