@@ -61,3 +61,9 @@ if (!OAUTH_GITHUB_CLIENT_SECRET) {
     console.error('OAUTH_GITHUB_CLIENT_SECRET env variable must be set');
     process.exit(-1);
 }
+
+export const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
+if (!RECAPTCHA_SECRET) {
+    console.error('RECAPTCHA_SECRET env variable must be set');
+    process.exit(-1);
+}

@@ -80,26 +80,33 @@ export class AuthController {
     }
 
     anonymousLogin(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
-        const email = `anonym${Math.round(Math.random() * 1000000)}@checkme.pro`;
         return writeResponse(
-            this.repo.createUser({
-                email,
-                id: null,
-                fullName: 'Anonymous',
-                password: 'anonymous',
-                admin: false,
-                social: null,
-                anonymous: true
-            })
-            .then(() => {
-                return this.repo.getUser(email);
-            })
-            .then((user: UserWithPassword) => {
-                const token = TokenUtils.createUserToken(user);
-                return this.tokenRepo.storeUserToken(user.id, token)
-                    .then(() => ({ token }));
+            verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
+                if (!valid) {
+                    throw new ApiError('Invalid captcha', 403);
+                }
+
+                const email = `anonym${Math.round(Math.random() * Number.MAX_SAFE_INTEGER)}@rankme.pro`;
+                return this.repo.createUser({
+                    email,
+                    id: null,
+                    fullName: 'Anonymous',
+                    password: 'anonymous',
+                    admin: false,
+                    social: null,
+                    anonymous: true
+                })
+                .then(() => {
+                    return this.repo.getUser(email);
+                })
+                .then((user: UserWithPassword) => {
+                    const token = TokenUtils.createUserToken(user);
+                    return this.tokenRepo.storeUserToken(user.id, token)
+                        .then(() => ({ token }));
+                });
             }),
-            req, res, next);
+            req, res, next
+        );
     }
 
     // TODO ### REMOVE temp implementation!
