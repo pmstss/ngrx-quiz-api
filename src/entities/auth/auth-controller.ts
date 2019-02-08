@@ -7,17 +7,18 @@ import { ApiError } from '../../api/api-error';
 import { AuthRepo } from './auth-repo';
 import { TokenRepo } from '../token/token-repo';
 import { TokenUtils } from '../../token/token-utils';
-import { TokenData } from '../../token/token-data';
+import { TokenData, TokenResponse } from '../../token/token-data';
 import { UserModel } from './user-model';
+import { verifyRecaptcha } from './recaptcha';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
-    login(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
+    login(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         return writeResponse(this.loginAux(req.body.email, req.body.password), req, res, next);
     }
 
-    private loginAux(email: string, password: string): Promise<{token: string}> {
+    private loginAux(email: string, password: string): Promise<TokenResponse> {
         return this.repo.getUser(email).then((user: UserWithPassword) => {
             if (user && compareSync(password, user.password)) {
                 const token = TokenUtils.createUserToken(user);
@@ -42,7 +43,7 @@ export class AuthController {
         );
     }
 
-    register(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
+    register(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         return writeResponse(
             this.repo.createUser({
                 id: null,
@@ -57,7 +58,7 @@ export class AuthController {
         );
     }
 
-    refreshToken(req: Request, res: Response, next: NextFunction): Promise<{token: string}> {
+    refreshToken(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         const token = req.body.token;
         return writeResponse(
             TokenUtils.verifyIgnoringExpiration(token)
@@ -72,15 +73,15 @@ export class AuthController {
                             .then(() => ({ token }));
                     }
 
-                    throw new ApiError('Invalid token', 401);
+                    throw new ApiError('Invalid token', 403);
                 }),
             req, res, next
         );
     }
 
-    anonymousLogin(req: Request, res: Response, next: NextFunction) {
+    anonymousLogin(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         const email = `anonym${Math.round(Math.random() * 1000000)}@checkme.pro`;
-        writeResponse(
+        return writeResponse(
             this.repo.createUser({
                 email,
                 id: null,
