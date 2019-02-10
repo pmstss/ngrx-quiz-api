@@ -15,7 +15,15 @@ export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
     login(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
-        return writeResponse(this.loginAux(req.body.email, req.body.password), req, res, next);
+        return writeResponse(
+            verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
+                if (!valid) {
+                    throw new ApiError('Invalid captcha', 403);
+                }
+                return this.loginAux(req.body.email, req.body.password);
+            }),
+            req, res, next
+        );
     }
 
     private loginAux(email: string, password: string): Promise<TokenResponse> {
@@ -45,15 +53,21 @@ export class AuthController {
 
     register(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         return writeResponse(
-            this.repo.createUser({
-                id: null,
-                email: req.body.email,
-                fullName: req.body.fullName,
-                password: req.body.password,
-                admin: false,
-                social: null,
-                anonymous: false
-            }).then(() => this.loginAux(req.body.email, req.body.password)),
+            verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
+                if (!valid) {
+                    throw new ApiError('Invalid captcha', 403);
+                }
+
+                return this.repo.createUser({
+                    id: null,
+                    email: req.body.email,
+                    fullName: req.body.fullName,
+                    password: req.body.password,
+                    admin: false,
+                    social: null,
+                    anonymous: false
+                }).then(() => this.loginAux(req.body.email, req.body.password));
+            }),
             req, res, next
         );
     }
@@ -111,26 +125,32 @@ export class AuthController {
 
     // TODO ### REMOVE temp implementation!
     resetPass(req: Request, res: Response, next: NextFunction) {
-        return UserModel.findOne(
-            {
-                email: req.body.email
-            })
-            .then((user: mongoose.Document) => {
-                if (user) {
-                    user.set('password', '12345');
-                    return user.save().then(() => {
-                        res.json({
-                            success: true,
-                            data: user
-                        });
-                    });
-                }
+        return verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
+            if (!valid) {
+                throw new ApiError('Invalid captcha', 403);
+            }
 
-                res.status(404).json({
-                    success: false,
-                    message: 'No such user'
-                });
-            })
-            .catch((err: any) => next(err));
+            return UserModel.findOne(
+                {
+                    email: req.body.email
+                })
+                .then((user: mongoose.Document) => {
+                    if (user) {
+                        user.set('password', '12345678');
+                        return user.save().then(() => {
+                            res.json({
+                                success: true,
+                                data: user
+                            });
+                        });
+                    }
+
+                    res.status(404).json({
+                        success: false,
+                        message: 'No such user'
+                    });
+                })
+                .catch((err: any) => next(err));
+        });
     }
 }
