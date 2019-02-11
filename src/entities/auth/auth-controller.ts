@@ -7,7 +7,7 @@ import { AuthRepo } from './auth-repo';
 import { TokenRepo } from '../token/token-repo';
 import { TokenUtils } from '../../token/token-utils';
 import { TokenData, TokenResponse } from '../../token/token-data';
-import { verifyRecaptcha } from './recaptcha';
+import { verifyRecaptcha } from '../../utils/recaptcha';
 import { RandomUtils } from '../../utils/random';
 import { Mailer } from '../../mail/mailer';
 import { MailResultRepo } from '../mail/mail-result-repo';
