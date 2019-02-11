@@ -11,6 +11,7 @@ import { verifyRecaptcha } from './recaptcha';
 import { RandomUtils } from '../../utils/random';
 import { Mailer } from '../../mail/mailer';
 import { MailResultRepo } from '../mail/mail-result-repo';
+import { BanWords } from '../../utils/ban-words';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
@@ -59,6 +60,10 @@ export class AuthController {
     register(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         if (!req.body.captchaToken || !req.body.email || !req.body.password || !req.body.fullName) {
             return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
+
+        if (BanWords.isInsulting(req.body.fullName)) {
+            return writeErrorResponse(res, next, new ApiError('Please be polite or banned', 422));
         }
 
         return writeResponse(

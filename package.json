@@ -45,6 +45,7 @@
     "@types/morgan": "^1.7.35",
     "@types/node": "^10.12.21",
     "@types/node-fetch": "^2.1.4",
+    "bad-words": "^3.0.0",
     "bcrypt": "3.0.2",
     "body-parser": "^1.18.3",
     "chakram": "^1.5.0",
