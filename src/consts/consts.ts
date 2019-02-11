@@ -67,3 +67,33 @@ if (!RECAPTCHA_SECRET) {
     console.error('RECAPTCHA_SECRET env variable must be set');
     process.exit(-1);
 }
+
+export const MAIL_HOST = process.env.MAIL_HOST;
+if (!MAIL_HOST) {
+    console.error('MAIL_HOST env variable must be set');
+    process.exit(-1);
+}
+
+export const MAIL_PORT = process.env.MAIL_PORT;
+if (!MAIL_PORT) {
+    console.error('MAIL_PORT env variable must be set');
+    process.exit(-1);
+}
+
+export const MAIL_USER = process.env.MAIL_USER;
+if (!MAIL_USER) {
+    console.error('MAIL_USER env variable must be set');
+    process.exit(-1);
+}
+
+export const MAIL_PASS = process.env.MAIL_PASS;
+if (!MAIL_PASS) {
+    console.error('MAIL_PASS env variable must be set');
+    process.exit(-1);
+}
+
+export const MAIL_RESET_URL = process.env.MAIL_RESET_URL;
+if (!MAIL_RESET_URL) {
+    console.error('MAIL_RESET_URL env variable must be set');
+    process.exit(-1);
+}

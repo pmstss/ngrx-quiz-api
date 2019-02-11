@@ -6,6 +6,7 @@ import * as cors from 'cors';
 
 import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
 import { dbConnect } from './db/db';
+import { Mailer } from './mail/mailer';
 import { tokenGuard } from './token/token-guard';
 import { stateGuard } from './state/state-guard';
 import { authRouter } from './entities/auth/auth-router';
@@ -26,8 +27,15 @@ const MongoStore = require('connect-mongo')(session);
     try {
         connection = await dbConnect();
     } catch (e) {
-        console.error('db connection error');
+        console.error('db connection error', e);
         process.exit(-2);
+    }
+
+    try {
+        await Mailer.getInstance().verify();
+    } catch (e) {
+        console.error('SMTP initialization error', e);
+        process.exit(-3);
     }
 
     const app = express();
