@@ -59,8 +59,12 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+export function hashPassword(pass: string) {
+    return hashSync(pass, SALT_ROUNDS);
+}
+
 UserSchema.pre('save', function (next: NextFunction) {
-    this.set('password', hashSync(this.get('password'), SALT_ROUNDS));
+    this.set('password', hashPassword(this.get('password')));
     next();
 });
 
