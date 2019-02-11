@@ -22,7 +22,7 @@ export class ScoreRepo {
             .group({
                 _id: { userId: '$userId' },
                 score: { $max: '$score' },
-                date: { $max: '$date' }/*,
+                createdAt: { $max: '$createdAt' }/*,
                 avgScore: { $avg: '$score' },
                 minScore: { $min: '$score' },
                 tries: { $sum: 1 }*/
