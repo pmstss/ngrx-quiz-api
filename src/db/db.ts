@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
 import { DB_URL } from '../consts/consts';
 
-// CONNECTION EVENTS
+// mongoose.set('debug', true);
+
 mongoose.connection.on('connected', () => {
     console.log('Mongoose connected');
 });

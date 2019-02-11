@@ -50,9 +50,12 @@ export const QuizItemSchema = new mongoose.Schema(
         }
     },
     {
-        collection: 'items'
+        collection: 'items',
+        timestamps: true
     }
 );
+
+QuizItemSchema.index({ quizId: 1, order: 1 });
 
 // tslint:disable-next-line variable-name
 export const QuizItemModel = mongoose.model<QuizItemMongooseDoc>('QuizItem', QuizItemSchema);
