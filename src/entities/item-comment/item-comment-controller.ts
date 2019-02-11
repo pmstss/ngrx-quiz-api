@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { Comment } from 'ngrx-quiz-common';
 import { ApiRequest } from '../../api/api-request';
 import { writeResponse } from '../../api/response-writer';
+import { BanWords } from '../../utils/ban-words';
 import { CommentRepo } from './item-comment-repo';
 
 export class CommentController {
@@ -19,7 +20,7 @@ export class CommentController {
             this.repo.addComment({
                 itemId: req.params.itemId,
                 userId: req.tokenData.user.id,
-                text: req.body.text
+                text: BanWords.clean(req.body.text)
             }),
             req, res, next
         );

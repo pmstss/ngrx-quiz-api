@@ -6,4 +6,8 @@ export class BanWords {
     static isInsulting(word: String) {
         return filter.isProfane(word);
     }
+
+    static clean(text: String) {
+        return filter.clean(text);
+    }
 }
