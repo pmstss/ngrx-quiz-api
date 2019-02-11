@@ -1,20 +1,25 @@
-import * as mongoose from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { compareSync } from 'bcrypt';
-import { UserWithPassword } from 'ngrx-quiz-common';
-import { writeResponse } from '../../api/response-writer';
+import { UserWithPassword, User } from 'ngrx-quiz-common';
+import { writeResponse, writeErrorResponse } from '../../api/response-writer';
 import { ApiError } from '../../api/api-error';
 import { AuthRepo } from './auth-repo';
 import { TokenRepo } from '../token/token-repo';
 import { TokenUtils } from '../../token/token-utils';
 import { TokenData, TokenResponse } from '../../token/token-data';
-import { UserModel } from './user-model';
 import { verifyRecaptcha } from './recaptcha';
+import { RandomUtils } from '../../utils/random';
+import { Mailer } from '../../mail/mailer';
+import { MailResultRepo } from '../mail/mail-result-repo';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
 
     login(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
+        if (!req.body.captchaToken || !req.body.email || !req.body.password) {
+            return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
+
         return writeResponse(
             verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
                 if (!valid) {
@@ -52,6 +57,10 @@ export class AuthController {
     }
 
     register(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
+        if (!req.body.captchaToken || !req.body.email || !req.body.password || !req.body.fullName) {
+            return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
+
         return writeResponse(
             verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
                 if (!valid) {
@@ -73,6 +82,10 @@ export class AuthController {
     }
 
     refreshToken(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
+        if (!req.body.token) {
+            return writeErrorResponse(res, next, new ApiError('Missing token', 403));
+        }
+
         const token = req.body.token;
         return writeResponse(
             TokenUtils.verifyIgnoringExpiration(token)
@@ -94,18 +107,22 @@ export class AuthController {
     }
 
     anonymousLogin(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
+        if (!req.body.captchaToken) {
+            return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
+
         return writeResponse(
             verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
                 if (!valid) {
                     throw new ApiError('Invalid captcha', 403);
                 }
 
-                const email = `anonym${Math.round(Math.random() * Number.MAX_SAFE_INTEGER)}@rankme.pro`;
+                const email = `anonym-${RandomUtils.generateAlfaNum(12, 32)}@rankme.pro`;
                 return this.repo.createUser({
                     email,
                     id: null,
                     fullName: 'Anonymous',
-                    password: 'anonymous',
+                    password: RandomUtils.generateAlfaNum(12, 32),
                     admin: false,
                     social: null,
                     anonymous: true
@@ -123,34 +140,45 @@ export class AuthController {
         );
     }
 
-    // TODO ### REMOVE temp implementation!
-    resetPass(req: Request, res: Response, next: NextFunction) {
-        return verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
-            if (!valid) {
-                throw new ApiError('Invalid captcha', 403);
-            }
+    requestResetPassToken(req: Request, res: Response, next: NextFunction): Promise<boolean> {
+        if (!req.body.captchaToken || !req.body.email) {
+            return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
 
-            return UserModel.findOne(
-                {
-                    email: req.body.email
-                })
-                .then((user: mongoose.Document) => {
-                    if (user) {
-                        user.set('password', '12345678');
-                        return user.save().then(() => {
-                            res.json({
-                                success: true,
-                                data: user
-                            });
-                        });
+        return writeResponse(
+            verifyRecaptcha(req.body.captchaToken).then((valid: boolean) => {
+                if (!valid) {
+                    throw new ApiError('Invalid captcha', 403);
+                }
+
+                const token =  RandomUtils.generateAlfaNum(32, 32);
+                return this.repo.upsertPasswordToken(req.body.email, token).then((user: User) => {
+                    if (!user) {
+                        throw new ApiError('No such user', 403);    // TODO do not expose this info?
                     }
+                    return Mailer.getInstance().sendPasswordReset(user.fullName, req.body.email, token)
+                        .then((mailResult: any) => {
+                            return MailResultRepo.insertMailResult(user.id, mailResult);
+                        });
+                });
+            }),
+            req, res, next
+        );
+    }
 
-                    res.status(404).json({
-                        success: false,
-                        message: 'No such user'
-                    });
-                })
-                .catch((err: any) => next(err));
-        });
+    resetPass(req: Request, res: Response, next: NextFunction) {
+        if (!req.body.token || !req.body.password) {
+            return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
+        }
+
+        return writeResponse(
+            this.repo.updatePassword(req.body.token, req.body.password).then((success: boolean) => {
+                if (!success) {
+                    throw new ApiError('No such user', 403);    // TODO do not expose this info?
+                }
+                return success;
+            }),
+            req, res, next
+        );
     }
 }

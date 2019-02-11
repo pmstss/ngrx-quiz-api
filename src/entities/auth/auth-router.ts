@@ -11,6 +11,7 @@ router.post('/anonymous', controller.anonymousLogin.bind(controller));
 router.post('/logout', controller.logout.bind(controller));
 router.post('/register', controller.register.bind(controller));
 router.post('/refresh-token', controller.refreshToken.bind(controller));
-router.post('/reset', controller.resetPass.bind(controller));
+router.post('/request-password', controller.requestResetPassToken.bind(controller));
+router.put('/reset-password', controller.resetPass.bind(controller));
 
 export const authRouter = router;
