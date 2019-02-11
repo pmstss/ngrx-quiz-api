@@ -1,6 +1,7 @@
 import { User } from 'ngrx-quiz-common';
 import { UserTokenModel, UserTokenMongooseDoc } from './user-token';
 import { OAuthTokenModel, GitHubTokenInfo, GoogleTokenInfo, OAuthType } from './oauth-token';
+import { RandomUtils } from '../../utils/random';
 
 export class TokenRepo {
     exists(userId: string, token: string): Promise<boolean> {
@@ -35,14 +36,6 @@ export class TokenRepo {
             .then(() => true);
     }
 
-    private generatePassword() {
-        let pass;
-        do {
-            pass = (Math.random() * 1024 * 1024).toString(36).split('.').join('');
-        } while (pass.length < 8);
-        return pass;
-    }
-
     storeOauthToken(tokenInfo: GitHubTokenInfo | GoogleTokenInfo, social: OAuthType): Promise<User> {
         return OAuthTokenModel.create({ token: tokenInfo }).then(() => {
             const email = tokenInfo.email || `${(tokenInfo as GitHubTokenInfo).login}@github.com`;
@@ -53,7 +46,7 @@ export class TokenRepo {
                 fullName,
                 social,
                 id: null,
-                password: this.generatePassword(),
+                password: RandomUtils.generateAlfaNum(12, 32),
                 admin: false,
                 anonymous: false
             };
