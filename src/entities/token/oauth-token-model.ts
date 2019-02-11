@@ -27,13 +27,18 @@ export interface OAuthTokenMongooseDoc extends OAuthToken, mongoose.Document {
 }
 
 // tslint:disable-next-line variable-name
-const OAuthTokenSchema = new mongoose.Schema({
-    token: {
-        type: mongoose.SchemaTypes.Mixed,
-        maxlength: 8192,
-        required: true
+const OAuthTokenSchema = new mongoose.Schema(
+    {
+        token: {
+            type: mongoose.SchemaTypes.Mixed,
+            maxlength: 8192,
+            required: true
+        }
+    },
+    {
+        timestamps: true
     }
-});
+);
 
 // tslint:disable-next-line variable-name
 export const OAuthTokenModel = mongoose.model<OAuthTokenMongooseDoc>('OAuthToken', OAuthTokenSchema);

@@ -10,7 +10,7 @@ import { BASE_URL, OAUTH_GOOGLE_CLIENT_ID, OAUTH_GOOGLE_CLIENT_SECRET,
     OAUTH_TOKEN_CALLBACK_URL,
     OAUTH_GITHUB_CLIENT_ID,
     OAUTH_GITHUB_CLIENT_SECRET} from '../../consts/consts';
-import { GitHubTokenInfo, GoogleTokenInfo, OAuthType } from '../token/oauth-token';
+import { GitHubTokenInfo, GoogleTokenInfo, OAuthType } from '../token/oauth-token-model';
 
 interface GoogleAccessResponse {
     access_token: string;

@@ -62,7 +62,8 @@ export const QuizSchema = new mongoose.Schema(
         }
     },
     {
-        collection: 'quizes'
+        collection: 'quizes',
+        timestamps: true
     }
 );
 

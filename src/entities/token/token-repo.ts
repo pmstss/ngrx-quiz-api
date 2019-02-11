@@ -1,6 +1,6 @@
 import { User } from 'ngrx-quiz-common';
-import { UserTokenModel, UserTokenMongooseDoc } from './user-token';
-import { OAuthTokenModel, GitHubTokenInfo, GoogleTokenInfo, OAuthType } from './oauth-token';
+import { UserTokenModel, UserTokenMongooseDoc } from './user-token-model';
+import { OAuthTokenModel, GitHubTokenInfo, GoogleTokenInfo, OAuthType } from './oauth-token-model';
 import { RandomUtils } from '../../utils/random';
 
 export class TokenRepo {
