@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItemAdmin } from 'ngrx-quiz-common';
+import { QuizItemAdmin, QuizItemChoice } from 'ngrx-quiz-common';
 import { QuizItemModel, QuizItemDoc, QuizItemMongooseDoc } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { UpdateResult } from '../mongo-types';
@@ -58,7 +58,7 @@ export class AdminQuizItemRepo {
                 $set: {
                     question: item.question,
                     choices: item.choices
-                        .map(ch => ({ ...ch, _id: mongoose.Types.ObjectId(ch.id) })),
+                        .map((ch: QuizItemChoice) => ({ ...ch, _id: mongoose.Types.ObjectId(ch.id) })),
                     singleChoice: item.singleChoice,
                     randomizeChoices: item.randomizeChoices
                 }
@@ -87,7 +87,7 @@ export class AdminQuizItemRepo {
             return QuizItemModel.update(
                 {
                     _id: mongoose.Types.ObjectId(itemId),
-                    quizId: mongoose.Types.ObjectId(quizId),
+                    quizId: mongoose.Types.ObjectId(quizId)
                 },
                 {
                     $set: {

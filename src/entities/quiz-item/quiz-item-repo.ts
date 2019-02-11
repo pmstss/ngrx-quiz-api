@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { QuizItem, QuizItemChoiceAdmin, QuizItemAnswered, QuizItemAdmin } from 'ngrx-quiz-common';
+import { QuizItem, QuizItemChoiceAdmin, QuizItemAdmin, QuizItemChoice } from 'ngrx-quiz-common';
 import { QuizItemModel, QuizItemMongooseDoc } from './quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { QuizItemChoiceMongooseDoc } from './quiz-item-choice-model';
@@ -53,7 +53,10 @@ export class QuizItemRepo {
             if (res.length) {
                 return {
                     ...res[0],
-                    choices: res[0].choices.map(ch => ({ ...ch, id: (ch.id as any).toHexString() }))
+                    choices: res[0].choices.map((ch: QuizItemChoice) => ({
+                        ...ch,
+                        id: (ch.id as any).toHexString()
+                    }))
                 };
             }
             throw new ApiError('No such item', 404);
@@ -67,7 +70,10 @@ export class QuizItemRepo {
             if (res.length) {
                 return res.map(r => ({
                     ...r,
-                    choices: res[0].choices.map(ch => ({ ...ch, id: (ch.id as any).toHexString() }))
+                    choices: res[0].choices.map((ch: QuizItemChoice) => ({
+                        ...ch,
+                        id: (ch.id as any).toHexString()
+                    }))
                 }));
             }
             return res;
