@@ -37,7 +37,7 @@ export class CommentRepo {
                 id: '$_id',
                 userName: '$fullName'
             })
-            .sort({ date: -1 })
+            .sort({ createdAt: -1 })
             .skip(offset)
             .limit(COMMENTS_PER_PAGE)
             .project({

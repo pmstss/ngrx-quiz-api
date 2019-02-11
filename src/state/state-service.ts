@@ -117,8 +117,7 @@ export class StateService {
             quizId: new mongoose.Types.ObjectId(quizId),
             userId: userId ? new mongoose.Types.ObjectId(userId) : null,
             sessionId: this.req.sessionID,
-            score: quizState.score / quizState.itemIds.length,
-            date: quizState.startDate
+            score: quizState.score / quizState.itemIds.length
         };
     }
 }

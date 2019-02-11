@@ -5,7 +5,7 @@ export interface QuizScoreDoc {
     userId: mongoose.Types.ObjectId;
     sessionId: string;
     score: number;
-    date: Date;
+    createdAt?: Date;
 }
 
 export interface QuizScoreMongooseDoc extends QuizScoreDoc, mongoose.Document {
@@ -38,15 +38,11 @@ export const QuizScoreSchema = new mongoose.Schema(
             min: 0,
             max: 500,
             required: true
-        },
-        date: {
-            type: mongoose.SchemaTypes.Date,
-            required: true,
-            default: Date.now
         }
     },
     {
-        collection: 'scores'
+        collection: 'scores',
+        timestamps: true
     }
 );
 
