@@ -13,6 +13,7 @@ const UserTokenSchema = new mongoose.Schema({
     userId: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
+        required: true,
         index: <mongoose.SchemaTypeOpts.IndexOpts>{
             unique: true
         }
