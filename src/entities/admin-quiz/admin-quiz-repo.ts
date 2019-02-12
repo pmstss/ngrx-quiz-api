@@ -21,12 +21,10 @@ export class AdminQuizRepo {
         return criteria;
     }
 
-    getQuiz(quizId: string): Promise<QuizMetaAdmin> {
+    getQuiz(quizId: string, user: User): Promise<QuizMetaAdmin> {
         return QuizModel
             .aggregate()
-            .match({
-                _id: mongoose.Types.ObjectId(quizId)
-            })
+            .match(this.getQuizMatchCriteria(quizId, user))
             .lookup({
                 from: 'items',
                 let: { id: '$_id' },
@@ -104,7 +102,7 @@ export class AdminQuizRepo {
             });
     }
 
-    createQuiz(quiz: QuizMetaBasic): Promise<QuizMetaAdmin> {
+    createQuiz(quiz: QuizMetaBasic, user: User): Promise<QuizMetaAdmin> {
         return QuizModel.create((<QuizDoc>{
             shortName: quiz.shortName,
             name: quiz.name,
@@ -113,28 +111,29 @@ export class AdminQuizRepo {
             randomizeItems: quiz.randomizeItems,
             public: true,
             published: false,
-            userId: quiz.userId
-        })).then((doc: QuizMongooseDoc) => this.getQuiz(doc._id));
+            userId: user.id
+        })).then((doc: QuizMongooseDoc) => this.getQuiz(doc._id, user));
     }
 
-    deleteQuiz(quizId: string): Promise<void> {
-        return Promise.all([
-            <Promise<DeleteResult>><any>
-            QuizItemModel.deleteMany({ quizId: mongoose.Types.ObjectId(quizId) }).exec(),
-            <Promise<DeleteResult>><any>
-            QuizModel.deleteOne({ _id: mongoose.Types.ObjectId(quizId) }).exec()
-        ]).then(([itemsDeleteResult, quizDeleteResult]: [DeleteResult, DeleteResult]) => {
-            if (!itemsDeleteResult.ok || !quizDeleteResult.ok || quizDeleteResult.n === 0) {
-                throw new ApiError('Error deleting quiz', 404);
-            }
-        });
+    deleteQuiz(quizId: string, user: User): Promise<void> {
+        return QuizModel.deleteOne(this.getQuizMatchCriteria(quizId, user)).exec()
+            .then((quizDeleteResult: DeleteResult) => {
+                if (!quizDeleteResult.ok || quizDeleteResult.n === 0) {
+                    throw new ApiError('Error deleting quiz', 404);
+                }
+            })
+            .then(() => {
+                return QuizItemModel.deleteMany({ quizId: mongoose.Types.ObjectId(quizId) }).exec();
+            }).then((itemsDeleteResult: DeleteResult) => {
+                if (!itemsDeleteResult.ok) {
+                    throw new ApiError('Error deleting quiz', 404);
+                }
+            });
     }
 
-    updateQuiz(quizId: string, quiz: QuizMetaBasic): Promise<QuizMetaAdmin> {
+    updateQuiz(quizId: string, quiz: QuizMetaBasic, user: User): Promise<QuizMetaAdmin> {
         return QuizModel.findOneAndUpdate(
-            {
-                _id: mongoose.Types.ObjectId(quizId)
-            },
+            this.getQuizMatchCriteria(quizId, user),
             {
                 $set: <QuizDoc>{
                     shortName: quiz.shortName,
@@ -145,7 +144,7 @@ export class AdminQuizRepo {
                 }
             }
         ).exec()
-        .then(() => this.getQuiz(quizId));
+        .then(() => this.getQuiz(quizId, user));
     }
 
     publishQuiz(quizId: string, user: User): Promise<boolean> {

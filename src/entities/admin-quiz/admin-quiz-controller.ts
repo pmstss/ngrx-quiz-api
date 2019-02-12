@@ -10,25 +10,28 @@ export class AdminQuizController {
     }
 
     getQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {
-        return writeResponse(this.repo.getQuiz(req.params.quizId), req , res, next);
+        return writeResponse(
+            this.repo.getQuiz(req.params.quizId, req.tokenData.user),
+            req , res, next
+        );
     }
 
     createQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {
         return writeResponse(
-            this.repo.createQuiz({
-                ...req.body,
-                userId: req.tokenData.user.id
-            }),
+            this.repo.createQuiz(req.body, req.tokenData.user),
             req , res, next
         );
     }
 
     updateQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {
-        return writeResponse(this.repo.updateQuiz(req.params.quizId, req.body), req , res, next);
+        return writeResponse(
+            this.repo.updateQuiz(req.params.quizId, req.body, req.tokenData.user),
+            req , res, next
+        );
     }
 
     deleteQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
-        return writeResponse(this.repo.deleteQuiz(req.params.quizId), req , res, next);
+        return writeResponse(this.repo.deleteQuiz(req.params.quizId, req.tokenData.user), req , res, next);
     }
 
     publishQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
