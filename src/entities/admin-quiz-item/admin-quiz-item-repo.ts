@@ -45,7 +45,7 @@ export class AdminQuizItemRepo {
             singleChoice: item.singleChoice,
             randomizeChoices: item.randomizeChoices,
             counter: 0,
-            order: 0
+            order: 100
         }).then((doc: QuizItemMongooseDoc) => this.getItem(doc._id));
     }
 

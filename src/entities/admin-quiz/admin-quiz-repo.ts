@@ -69,7 +69,7 @@ export class AdminQuizRepo {
             })
             // sorting by items order
             .unwind({ path: '$items', preserveNullAndEmptyArrays: true })
-            .sort({ 'items.order': 1 })
+            .sort({ 'items.order': 1, 'items.updatedAt': 1 })
             .group({
                 _id: '$_id',
                 items: {
