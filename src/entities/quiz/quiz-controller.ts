@@ -1,17 +1,16 @@
 import { Response, NextFunction } from 'express';
-import { QuizMeta, QuizMetaListItem, TopScore } from 'ngrx-quiz-common';
+import { QuizMeta, QuizMetaListItem } from 'ngrx-quiz-common';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
-import { QuizRepo } from './quiz-repo';
 import { QuizState, ClientQuizState } from '../../state/quiz-state';
+import { QuizRepo } from './quiz-repo';
 
 export class QuizController {
     constructor(private repo: QuizRepo) {
     }
 
-    getQuizList(req: ApiRequest, res: Response, next: NextFunction):
-            Promise<QuizMetaListItem[]> {
+    getQuizList(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaListItem[]> {
         return writeResponse(
             this.repo.getQuizList().then(
                 (quizes: (QuizMeta & {totalQuestions: number})[]): QuizMetaListItem[] =>
@@ -25,8 +24,7 @@ export class QuizController {
         );
     }
 
-    getQuiz(req: ApiRequest, res: Response, next: NextFunction):
-            Promise<QuizMeta & ClientQuizState> {
+    getQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMeta & ClientQuizState> {
         return writeResponse(
             this.repo.getQuiz(req.params.shortName)
                 .then((quiz: QuizMeta): QuizMeta & ClientQuizState => {
