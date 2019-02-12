@@ -1,11 +1,15 @@
-import { QuizMeta } from 'ngrx-quiz-common';
-import { QuizModel  } from './quiz-model';
+import { QuizMeta, QuizMetaListItem } from 'ngrx-quiz-common';
 import { ApiError } from '../../api/api-error';
+import { QuizModel  } from './quiz-model';
 
 export class QuizRepo {
-    getQuizList(): Promise<(QuizMeta & {totalQuestions: number})[]> {
+    getQuizList(): Promise<QuizMetaListItem[]> {
         return QuizModel
             .aggregate()
+            .match({
+                public: true,
+                published: true
+            })
             .lookup({
                 from: 'items',
                 localField: '_id',
