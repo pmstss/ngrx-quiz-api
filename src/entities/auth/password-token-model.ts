@@ -10,25 +10,28 @@ export interface PasswordTokenDocMongoose extends PasswordTokenDoc, mongoose.Doc
 }
 
 // tslint:disable-next-line variable-name
-const PasswordTokenSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User',
-        required: true
+const PasswordTokenSchema = new mongoose.Schema(
+    {
+        userId: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        token: {
+            type: mongoose.SchemaTypes.String,
+            maxlength: 64,
+            required: true
+        },
+        used: {
+            type: mongoose.SchemaTypes.Boolean,
+            required: true,
+            default: false
+        }
     },
-    token: {
-        type: mongoose.SchemaTypes.String,
-        maxlength: 64,
-        required: true
-    },
-    used: {
-        type: mongoose.SchemaTypes.Boolean,
-        required: true,
-        default: false
+    {
+        timestamps: true
     }
-}, {
-    timestamps: true
-});
+);
 PasswordTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
 
 // tslint:disable-next-line variable-name

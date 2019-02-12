@@ -52,7 +52,7 @@ export class AdminQuizRepo {
                         }
                     }
                 },
-                id: '$_id',
+                id: '$_id'
             })
             // sorting by items order
             .unwind({ path: '$items', preserveNullAndEmptyArrays: true })
@@ -63,7 +63,7 @@ export class AdminQuizRepo {
                     $push: '$items'
                 },
                 quizMeta: {
-                    $mergeObjects: '$$CURRENT',
+                    $mergeObjects: '$$CURRENT'
                 }
             })
             .project({
