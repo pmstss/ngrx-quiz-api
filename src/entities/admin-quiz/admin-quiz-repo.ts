@@ -1,11 +1,26 @@
 import * as mongoose from 'mongoose';
-import { QuizMetaAdmin, QuizMetaBasic } from 'ngrx-quiz-common';
+import { QuizMetaAdmin, QuizMetaBasic, User } from 'ngrx-quiz-common';
 import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
 import { QuizItemModel } from '../quiz-item/quiz-item-model';
 import { ApiError } from '../../api/api-error';
 import { DeleteResult } from '../mongo-types';
 
+interface QuizMatchCriteria {
+    _id: mongoose.Types.ObjectId;
+    userId?: string;
+}
+
 export class AdminQuizRepo {
+    private getQuizMatchCriteria(quizId: string, user: User): QuizMatchCriteria {
+        const criteria: QuizMatchCriteria =             {
+            _id: mongoose.Types.ObjectId(quizId)
+        };
+        if (!user.admin) {
+            criteria.userId = user.id;
+        }
+        return criteria;
+    }
+
     getQuiz(quizId: string): Promise<QuizMetaAdmin> {
         return QuizModel
             .aggregate()
@@ -102,7 +117,6 @@ export class AdminQuizRepo {
         })).then((doc: QuizMongooseDoc) => this.getQuiz(doc._id));
     }
 
-    // TODO ### mark as deleted (with unique shortName change)
     deleteQuiz(quizId: string): Promise<void> {
         return Promise.all([
             <Promise<DeleteResult>><any>
@@ -132,5 +146,29 @@ export class AdminQuizRepo {
             }
         ).exec()
         .then(() => this.getQuiz(quizId));
+    }
+
+    publishQuiz(quizId: string, user: User): Promise<boolean> {
+        return QuizModel.findOneAndUpdate(
+            this.getQuizMatchCriteria(quizId, user),
+            {
+                $set: <QuizDoc>{
+                    published: true
+                }
+            }
+        ).exec()
+        .then((doc: QuizMongooseDoc) => !!doc);
+    }
+
+    unpublishQuiz(quizId: string, user: User): Promise<boolean> {
+        return QuizModel.findOneAndUpdate(
+            this.getQuizMatchCriteria(quizId, user),
+            {
+                $set: <QuizDoc>{
+                    published: false
+                }
+            }
+        ).exec()
+        .then((doc: QuizMongooseDoc) => !!doc);
     }
 }
