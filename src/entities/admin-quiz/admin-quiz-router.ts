@@ -5,6 +5,7 @@ import { AdminQuizRepo } from './admin-quiz-repo';
 const controller = new AdminQuizController(new AdminQuizRepo());
 
 const router = Router();
+router.get('/', controller.getQuizList.bind(controller));
 router.post('/', controller.createQuiz.bind(controller));
 router.get('/:quizId', controller.getQuiz.bind(controller));
 router.put('/:quizId', controller.updateQuiz.bind(controller));

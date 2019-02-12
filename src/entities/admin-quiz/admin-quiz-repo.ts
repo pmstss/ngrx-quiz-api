@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
-import { QuizMetaAdmin, QuizMetaBasic, User } from 'ngrx-quiz-common';
-import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
-import { QuizItemModel } from '../quiz-item/quiz-item-model';
+import { QuizMetaAdmin, QuizMetaBasic, User, QuizMetaListItem } from 'ngrx-quiz-common';
 import { ApiError } from '../../api/api-error';
 import { DeleteResult } from '../mongo-types';
+import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
+import { QuizItemModel } from '../quiz-item/quiz-item-model';
 
 interface QuizMatchCriteria {
     _id: mongoose.Types.ObjectId;
@@ -11,6 +11,31 @@ interface QuizMatchCriteria {
 }
 
 export class AdminQuizRepo {
+    getQuizList(user: User): Promise<QuizMetaListItem[]> {
+        const criteria = this.getQuizMatchCriteria(null, user);
+        delete criteria._id;
+
+        return QuizModel
+            .aggregate()
+            .match(criteria)
+            .lookup({
+                from: 'items',
+                localField: '_id',
+                foreignField: 'quizId',
+                as: 'items'
+            })
+            .addFields({
+                id: '$_id',
+                totalQuestions: { $size: '$items' }
+            })
+            .project({
+                _id: 0,
+                __v: 0,
+                items: 0
+            })
+            .exec();
+    }
+
     private getQuizMatchCriteria(quizId: string, user: User): QuizMatchCriteria {
         const criteria: QuizMatchCriteria =             {
             _id: mongoose.Types.ObjectId(quizId)

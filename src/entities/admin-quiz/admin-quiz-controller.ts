@@ -1,12 +1,16 @@
 import { Response, NextFunction } from 'express';
-import { QuizMetaAdmin } from 'ngrx-quiz-common';
+import { QuizMetaAdmin, QuizMetaListItem } from 'ngrx-quiz-common';
+import { ApiError } from '../../api/api-error';
 import { ApiRequest } from '../../api/api-request';
 import { writeResponse } from '../../api/response-writer';
 import { AdminQuizRepo } from './admin-quiz-repo';
-import { ApiError } from '../../api/api-error';
 
 export class AdminQuizController {
     constructor(private repo: AdminQuizRepo) {
+    }
+
+    getQuizList(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaListItem[]> {
+        return writeResponse(this.repo.getQuizList(req.tokenData.user), req, res, next);
     }
 
     getQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {
