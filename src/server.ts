@@ -67,7 +67,7 @@ const MongoStore = require('connect-mongo')(session);
         saveUninitialized: true,
         cookie: {
             httpOnly: true,
-            secure: !!process.env.NODE_ENV
+            secure: false // ### temp util SSL config !!process.env.NODE_ENV
         }
     }));
 
