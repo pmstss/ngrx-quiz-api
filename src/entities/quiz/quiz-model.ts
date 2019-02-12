@@ -54,11 +54,13 @@ export const QuizSchema = new mongoose.Schema(
         },
         published: {
             type: mongoose.SchemaTypes.Boolean,
-            required: true
+            required: true,
+            default: false
         },
         public: {
             type: mongoose.SchemaTypes.Boolean,
-            required: true
+            required: true,
+            default: true
         }
     },
     {

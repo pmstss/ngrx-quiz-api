@@ -13,7 +13,13 @@ export class AdminQuizController {
     }
 
     createQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {
-        return writeResponse(this.repo.createQuiz(req.body), req , res, next);
+        return writeResponse(
+            this.repo.createQuiz({
+                ...req.body,
+                userId: req.tokenData.user.id
+            }),
+            req , res, next
+        );
     }
 
     updateQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaAdmin> {

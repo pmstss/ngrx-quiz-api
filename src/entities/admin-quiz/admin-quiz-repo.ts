@@ -95,7 +95,10 @@ export class AdminQuizRepo {
             name: quiz.name,
             description: quiz.name,
             descriptionFull: quiz.name,
-            randomizeItems: quiz.randomizeItems
+            randomizeItems: quiz.randomizeItems,
+            public: true,
+            published: false,
+            userId: quiz.userId
         })).then((doc: QuizMongooseDoc) => this.getQuiz(doc._id));
     }
 
