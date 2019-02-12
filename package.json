@@ -2,7 +2,7 @@
   "name": "ngx-quiz-api",
   "version": "0.0.1",
   "description": "Server side for ngx-quiz - MEAN-based Open Source Quiz Platform",
-  "main": "server.js",
+  "main": "src/server.ts",
   "scripts": {
     "postinstall": "npm run build",
     "start": "node dist/server.js",
@@ -27,12 +27,16 @@
     "mongodb",
     "api"
   ],
-  "author": "Viachaslau Tyshkavets",
+  "author": {
+    "name": "Viachaslau Tyhskavets",
+    "email": "pmstss@gmail.com"
+  },
   "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/pmstss/ngx-quiz-api/issues"
   },
   "homepage": "https://github.com/pmstss/ngx-quiz-api",
+  "deprecated": false,
   "dependencies": {
     "@types/bcrypt": "3.0.0",
     "@types/chai": "4.1.7",
@@ -67,5 +71,8 @@
   },
   "devDependencies": {
     "ts-node-dev": "1.0.0-pre.32"
+  },
+  "engines": {
+    "node": "11.x"
   }
 }
