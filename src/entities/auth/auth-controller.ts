@@ -171,18 +171,19 @@ export class AuthController {
         );
     }
 
-    resetPass(req: Request, res: Response, next: NextFunction) {
+    resetPass(req: Request, res: Response, next: NextFunction): Promise<TokenResponse> {
         if (!req.body.token || !req.body.password) {
             return writeErrorResponse(res, next, new ApiError('Invalid parameters', 422));
         }
 
         return writeResponse(
-            this.repo.updatePassword(req.body.token, req.body.password).then((success: boolean) => {
-                if (!success) {
-                    throw new ApiError('No such user', 403);    // TODO do not expose this info?
-                }
-                return success;
-            }),
+            this.repo.updatePassword(req.body.token, req.body.password)
+                .then((user: User) => {
+                    if (!user) {
+                        throw new ApiError('No such user', 403);    // TODO do not expose this info?
+                    }
+                    return this.loginAux(user.email, req.body.password);
+                }),
             req, res, next
         );
     }

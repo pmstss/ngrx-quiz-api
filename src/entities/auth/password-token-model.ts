@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 export interface PasswordTokenDoc {
     userId: mongoose.Types.ObjectId;
     token: string;
+    used: boolean;
 }
 
 export interface PasswordTokenDocMongoose extends PasswordTokenDoc, mongoose.Document {
@@ -19,6 +20,11 @@ const PasswordTokenSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         maxlength: 64,
         required: true
+    },
+    used: {
+        type: mongoose.SchemaTypes.Boolean,
+        required: true,
+        default: false
     }
 }, {
     timestamps: true

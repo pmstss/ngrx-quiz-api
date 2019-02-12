@@ -61,7 +61,8 @@ export class AuthRepo {
                 },
                 {
                     $set: {
-                        token
+                        token,
+                        used: false
                     }
                 },
                 {
@@ -72,25 +73,31 @@ export class AuthRepo {
         });
     }
 
-    updatePassword(token: string, password: string): Promise<boolean> {
-        return PasswordTokenModel.findOneAndDelete({
-            token
-        }).then((passwordTokenDoc: PasswordTokenDocMongoose) => {
-            if (!passwordTokenDoc) {
-                return false;
-            }
-
-            return UserModel.findOneAndUpdate(
-                {
-                    _id: passwordTokenDoc.userId
-                },
-                {
-                    $set: {
-                        password: hashPassword(password)
-                    }
+    updatePassword(token: string, password: string): Promise<UserWithPassword> {
+        // bug similar to https://github.com/Automattic/mongoose/issues/1618
+        // findOneAndDelete() does not return removed doc *sometimes*
+        return PasswordTokenModel.findOneAndUpdate(
+            {
+                token,
+                used: false
+            },
+            {
+                $set: { used: true }
+            }).exec().then((passwordTokenDoc: PasswordTokenDocMongoose) => {
+                if (!passwordTokenDoc) {
+                    return null;
                 }
-            ).exec()
-            .then(doc => !!doc);
-        });
+
+                return UserModel.findOneAndUpdate(
+                    {
+                        _id: passwordTokenDoc.userId
+                    },
+                    {
+                        $set: {
+                            password
+                        }
+                    }
+                ).exec();
+            });
     }
 }
