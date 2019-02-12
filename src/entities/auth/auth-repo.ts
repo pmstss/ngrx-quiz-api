@@ -1,3 +1,8 @@
+/*
+ * Project: ngrx-quiz-api (https://github.com/pmstss/ngrx-quiz-api)
+ * Copyright 2019 Viachaslau Tyshkavets
+ * Licensed under the GPLv3 License. See LICENSE.txt in the project root for license information.
+ */
 import { UserWithPassword, User } from 'ngrx-quiz-common';
 import { UserModel, UserDocMongoose, hashPassword } from './user-model';
 import { PasswordTokenModel, PasswordTokenDocMongoose } from './password-token-model';
@@ -73,7 +78,7 @@ export class AuthRepo {
         });
     }
 
-    updatePassword(token: string, password: string): Promise<UserWithPassword> {
+    updatePassword(token: string, password: string): Promise<UserDocMongoose> {
         // bug similar to https://github.com/Automattic/mongoose/issues/1618
         // findOneAndDelete() does not return removed doc *sometimes*
         return PasswordTokenModel.findOneAndUpdate(

@@ -1,3 +1,8 @@
+/*
+ * Project: ngrx-quiz-api (https://github.com/pmstss/ngrx-quiz-api)
+ * Copyright 2019 Viachaslau Tyshkavets
+ * Licensed under the GPLv3 License. See LICENSE.txt in the project root for license information.
+ */
 import { Request, Response, NextFunction } from 'express';
 import { compareSync } from 'bcrypt';
 import { UserWithPassword, User } from 'ngrx-quiz-common';
@@ -12,6 +17,7 @@ import { RandomUtils } from '../../utils/random';
 import { Mailer } from '../../mail/mailer';
 import { MailResultRepo } from '../mail/mail-result-repo';
 import { BanWords } from '../../utils/ban-words';
+import { UserDocMongoose } from './user-model';
 
 export class AuthController {
     constructor(private repo: AuthRepo, private tokenRepo: TokenRepo) {}
@@ -178,7 +184,7 @@ export class AuthController {
 
         return writeResponse(
             this.repo.updatePassword(req.body.token, req.body.password)
-                .then((user: User) => {
+                .then((user: UserDocMongoose) => {
                     if (!user) {
                         throw new ApiError('No such user', 403);    // TODO do not expose this info?
                     }

@@ -1,5 +1,10 @@
+/*
+ * Project: ngrx-quiz-api (https://github.com/pmstss/ngrx-quiz-api)
+ * Copyright 2019 Viachaslau Tyshkavets
+ * Licensed under the GPLv3 License. See LICENSE.txt in the project root for license information.
+ */
 import { Response, NextFunction } from 'express';
-import { QuizMeta, QuizMetaListItem } from 'ngrx-quiz-common';
+import { QuizMeta, QuizMetaListItem, QuizMetaBasic } from 'ngrx-quiz-common';
 import { ApiRequest } from '../../api/api-request';
 import { ApiError } from '../../api/api-error';
 import { writeResponse, writeErrorResponse } from '../../api/response-writer';
@@ -13,8 +18,8 @@ export class QuizController {
     getQuizList(req: ApiRequest, res: Response, next: NextFunction): Promise<QuizMetaListItem[]> {
         return writeResponse(
             this.repo.getQuizList().then(
-                (quizes: (QuizMeta & {totalQuestions: number})[]): QuizMetaListItem[] =>
-                quizes.map((quiz: (QuizMeta & {totalQuestions: number})): QuizMetaListItem => ({
+                (quizes: (QuizMetaBasic & {totalQuestions: number})[]): QuizMetaListItem[] =>
+                quizes.map((quiz: (QuizMetaBasic & {totalQuestions: number})): QuizMetaListItem => ({
                     ...quiz,
                     started: req.stateService.isStarted(quiz.id),
                     finished: req.stateService.isFinished(quiz.id)

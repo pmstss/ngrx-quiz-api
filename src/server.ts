@@ -1,3 +1,8 @@
+/*
+ * Project: ngrx-quiz-api (https://github.com/pmstss/ngrx-quiz-api)
+ * Copyright 2019 Viachaslau Tyshkavets
+ * Licensed under the GPLv3 License. See LICENSE.txt in the project root for license information.
+ */
 import * as express from 'express';
 import * as session from 'express-session';
 import * as morgan from 'morgan';
@@ -45,13 +50,13 @@ const MongoStore = require('connect-mongo')(session);
         credentials: true
     }));
 
-    app.use(morgan('dev'));
-    app.use(bodyParser.json());
-
     app.use((req, res, next) => {
         res.header('Access-Control-Allow-Credentials', 'true');
         next();
     });
+
+    app.use(morgan('dev'));
+    app.use(bodyParser.json());
 
     app.use(session({
         secret: COOKIE_SECRET_KEY,
@@ -61,8 +66,8 @@ const MongoStore = require('connect-mongo')(session);
         resave: true,
         saveUninitialized: true,
         cookie: {
-            httpOnly: false,
-            secure: false
+            httpOnly: true,
+            secure: !!process.env.NODE_ENV
         }
     }));
 
@@ -83,5 +88,5 @@ const MongoStore = require('connect-mongo')(session);
         res.status(err.status || 500).send(err.message);
     });
 
-    app.listen(3333, () => console.log('Listening...'));
+    app.listen(process.env.PORT || 3333, () => console.log('Listening...'));
 })();

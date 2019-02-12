@@ -1,3 +1,8 @@
+/*
+ * Project: ngrx-quiz-api (https://github.com/pmstss/ngrx-quiz-api)
+ * Copyright 2019 Viachaslau Tyshkavets
+ * Licensed under the GPLv3 License. See LICENSE.txt in the project root for license information.
+ */
 import { MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_RESET_URL } from '../consts/consts';
 const nodemailer = require('nodemailer'); // @types are outdated
 
