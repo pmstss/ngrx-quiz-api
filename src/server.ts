@@ -45,15 +45,17 @@ const MongoStore = require('connect-mongo')(session);
     const app = express();
 
     app.set('json spaces', 4);
+    const corsOrigins = CORS_ORIGIN.split(',').map(item => item.trim());
     app.use(cors({
-        origin: CORS_ORIGIN,
+        origin: (origin, callback) => {
+            if (corsOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true
     }));
-
-    app.use((req, res, next) => {
-        res.header('Access-Control-Allow-Credentials', 'true');
-        next();
-    });
 
     app.use(morgan('dev'));
     app.use(bodyParser.json());
