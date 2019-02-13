@@ -47,19 +47,14 @@ const MongoStore = require('connect-mongo')(session);
     app.set('json spaces', 4);
     const corsOrigins = CORS_ORIGIN.split(',').map(item => item.trim());
     app.use(cors({
-        origin: (origin, callback) => {
-            if (corsOrigins.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
+        origin: corsOrigins,
         credentials: true
     }));
 
     app.use(morgan('dev'));
     app.use(bodyParser.json());
 
+    console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
     app.use(session({
         secret: COOKIE_SECRET_KEY,
         store: new MongoStore({
@@ -69,7 +64,7 @@ const MongoStore = require('connect-mongo')(session);
         saveUninitialized: true,
         cookie: {
             httpOnly: true,
-            secure: !!process.env.NODE_ENV
+            secure: process.env.NODE_ENV !== 'development'
         }
     }));
 
