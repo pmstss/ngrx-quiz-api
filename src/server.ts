@@ -8,6 +8,7 @@ import * as session from 'express-session';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as compression from 'compression';
 
 import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
 import { dbConnect } from './db/db';
@@ -43,6 +44,7 @@ const MongoStore = require('connect-mongo')(session);
     }
 
     const app = express();
+    app.use(compression({ threshold: 256 }));
 
     if (process.env.NODE_ENV === 'development') {
         app.set('json spaces', 4);
