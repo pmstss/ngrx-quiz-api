@@ -1,8 +1,11 @@
-# ngrx-quiz
+# ngrx-quiz-api
 
 Backend for [ngrx-quiz](https://github.com/pmstss/ngrx-quiz) - MEAN-based Open Source Quiz Platform
 
 **ALPHA VERSION, bugs are highly possible...**
+
+### Live Demo
+[https://rankme.pro](https://rankme.pro/)
 
 ### Features
 * heavy usage of [MongoDB aggregation framework](https://docs.mongodb.com/manual/aggregation/)
@@ -16,8 +19,8 @@ Backend for [ngrx-quiz](https://github.com/pmstss/ngrx-quiz) - MEAN-based Open S
 
 * [Node.js](https://github.com/nodejs/node)
 * [Express](https://github.com/expressjs/express)
-* [Mongoose](https://github.com/Automattic/mongoose)
 * [MongoDB](https://github.com/mongodb/mongo)
+* [Mongoose](https://github.com/Automattic/mongoose)
 * [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
 * [nodemailer](https://github.com/nodemailer/nodemailer)
 * [Typescript](https://github.com/Microsoft/TypeScript)
@@ -44,4 +47,3 @@ Viachaslau Tyshkavets
 
 ### License
 [GPLv3](LICENSE.txt) license.
-
