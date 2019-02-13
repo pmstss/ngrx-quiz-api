@@ -11,10 +11,8 @@ import { TokenUtils } from '../../token/token-utils';
 import { AuthRepo } from '../auth/auth-repo';
 import { writeErrorResponse } from '../../api/response-writer';
 import { ApiError } from '../../api/api-error';
-import { BASE_URL, OAUTH_GOOGLE_CLIENT_ID, OAUTH_GOOGLE_CLIENT_SECRET,
-    OAUTH_TOKEN_CALLBACK_URL,
-    OAUTH_GITHUB_CLIENT_ID,
-    OAUTH_GITHUB_CLIENT_SECRET} from '../../consts/consts';
+import { OAUTH_GOOGLE_CLIENT_ID, OAUTH_GOOGLE_CLIENT_SECRET, OAUTH_TOKEN_CALLBACK_URL,
+    OAUTH_GITHUB_CLIENT_ID, OAUTH_GITHUB_CLIENT_SECRET} from '../../consts/consts';
 import { GitHubTokenInfo, GoogleTokenInfo, OAuthType } from '../token/oauth-token-model';
 
 interface GoogleAccessResponse {
@@ -34,12 +32,18 @@ interface GitHubAccessResponse {
 export class OAuthController {
     constructor(private tokenRepo: TokenRepo, private authRepo: AuthRepo) {}
 
+    private getBaseUrl(req: Request) {
+        return `${req.protocol}://${req.get('host')}`;
+    }
+
     google(req: Request, res: Response, next: NextFunction) {
         const code = req.query.code;
 
         if (!code) {
             return writeErrorResponse(res, next, new ApiError('No code in Google response', 422));
         }
+
+        const BASE_URL = this.getBaseUrl(req);
 
         const params = new URLSearchParams();
         params.append('code', code);
@@ -75,6 +79,8 @@ export class OAuthController {
         if (!code) {
             return writeErrorResponse(res, next, new ApiError('No code in GitHub response', 422));
         }
+
+        const BASE_URL = this.getBaseUrl(req);
 
         const params = new URLSearchParams();
         params.append('code', code);

@@ -7,12 +7,6 @@ export const COMMENTS_PER_PAGE = 10;
 
 export const SALT_ROUNDS = 3;
 
-export const BASE_URL = process.env.BASE_URL;
-if (!BASE_URL) {
-    console.error('BASE_URL env variable must be set');
-    process.exit(-1);
-}
-
 export const CORS_ORIGIN = process.env.CORS_ORIGIN;
 if (!CORS_ORIGIN) {
     console.error('CORS_ORIGIN env variable must be set');
