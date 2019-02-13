@@ -44,7 +44,11 @@ const MongoStore = require('connect-mongo')(session);
 
     const app = express();
 
-    app.set('json spaces', 4);
+    if (process.env.NODE_ENV === 'development') {
+        app.set('json spaces', 4);
+    }
+
+    app.enable('trust proxy'); // for heroku req.protocol
     const corsOrigins = CORS_ORIGIN.split(',').map(item => item.trim());
     app.use(cors({
         origin: corsOrigins,
@@ -54,7 +58,6 @@ const MongoStore = require('connect-mongo')(session);
     app.use(morgan('dev'));
     app.use(bodyParser.json());
 
-    console.log('process.env.NODE_ENV: ', process.env.NODE_ENV);
     app.use(session({
         secret: COOKIE_SECRET_KEY,
         store: new MongoStore({

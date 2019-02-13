@@ -91,28 +91,29 @@ export class OAuthController {
         fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
             body: params
-        }).then((response: any) => response.text())
-        .then((text: string) => text.split('&').reduce(
-            (res: any, item: string) => {
-                const [key, value] = item.split('=');
-                res[key] = value;
-                return res;
-            },
-            {}
-        )).then((tokenResponse: GitHubAccessResponse) =>
-            fetch(`https://api.github.com/user?access_token=${tokenResponse.access_token}`))
-        .then((response: any) => response.json())
-        .then((tokenInfo: GitHubTokenInfo) => this.tokenRepo.storeOauthToken(tokenInfo, OAuthType.GITHUB))
-        .then((user: UserWithPassword) => this.createUser(user))
-        .then((user: User) => {
-            const token = TokenUtils.createUserToken(user);
-            return this.tokenRepo.storeUserToken(user.id, token).then(() => token);
         })
-        .then((token: string) => res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
-        .catch((err: any) => {
-            console.error(err);
-            writeErrorResponse(res, next, new ApiError('OAuth Error', 400));
-        });
+            .then((response: any) => response.text())
+            .then((text: string) => text.split('&').reduce(
+                (res: any, item: string) => {
+                    const [key, value] = item.split('=');
+                    res[key] = value;
+                    return res;
+                },
+                {}
+            )).then((tokenResponse: GitHubAccessResponse) =>
+                fetch(`https://api.github.com/user?access_token=${tokenResponse.access_token}`))
+            .then((response: any) => response.json())
+            .then((tokenInfo: GitHubTokenInfo) => this.tokenRepo.storeOauthToken(tokenInfo, OAuthType.GITHUB))
+            .then((user: UserWithPassword) => this.createUser(user))
+            .then((user: User) => {
+                const token = TokenUtils.createUserToken(user);
+                return this.tokenRepo.storeUserToken(user.id, token).then(() => token);
+            })
+            .then((token: string) => res.redirect(`${OAUTH_TOKEN_CALLBACK_URL}${token}`))
+            .catch((err: any) => {
+                console.error(err);
+                writeErrorResponse(res, next, new ApiError('OAuth Error', 400));
+            });
     }
 
     private createUser(user: UserWithPassword): Promise<User> {
