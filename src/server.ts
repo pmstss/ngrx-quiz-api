@@ -10,7 +10,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as compression from 'compression';
 
-import { CORS_ORIGIN, COOKIE_SECRET_KEY } from './consts/consts';
+import { CORS_ORIGIN, COOKIE_SECRET_KEY, SERVER_PORT } from './consts/consts';
 import { dbConnect } from './db/db';
 import { Mailer } from './mail/mailer';
 import { tokenGuard } from './token/token-guard';
@@ -40,7 +40,6 @@ const MongoStore = require('connect-mongo')(session);
         await Mailer.getInstance().verify();
     } catch (e) {
         console.error('SMTP initialization error', e);
-        process.exit(-3);
     }
 
     const app = express();
@@ -91,5 +90,5 @@ const MongoStore = require('connect-mongo')(session);
         res.status(err.status || 500).send(err.message);
     });
 
-    app.listen(process.env.PORT || 3333, () => console.log('Listening...'));
+    app.listen(SERVER_PORT, () => console.log('Listening...'));
 })();
