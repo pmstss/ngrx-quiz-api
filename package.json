@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "bin": {
     "ngrx-quiz-api": "./bin/ngrx-quiz-api"
-  },  
+  },
   "scripts": {
     "heroku-postbuild": "npm run build",
     "start": "node dist/server.js",
@@ -43,7 +43,7 @@
   "files": [
     "dist/**/*",
     "bin/*"
-  ],  
+  ],
   "dependencies": {
     "@types/bcrypt": "3.0.0",
     "@types/chai": "4.1.7",
