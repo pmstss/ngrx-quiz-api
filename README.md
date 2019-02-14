@@ -28,11 +28,16 @@ Backend for [ngrx-quiz](https://github.com/pmstss/ngrx-quiz) - MEAN-based Open S
 
 ### Running locally for development
 
-    git clone https://github.com/pmstss/ngrx-quiz-api
-    cd ngrx-quiz-api
-    <... set all required environment variables, see src/consts/consts.ts ...>
+    git clone https://github.com/pmstss/ngrx-quiz-api && cd ngrx-quiz-api
+    <... adjust environment variables, see src/consts/consts.ts ...>
     npm install
     npm run dev
+    
+### Running locally without development intent
+
+    npm install ngrx-quiz-api
+    <... adjust environment variables, see src/consts/consts.ts ...>
+    ./node_modules/bin/ngrx-quiz-api    
 
 ### Contribution
 You are kindly welcome to join to project development!
