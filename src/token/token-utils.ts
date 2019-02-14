@@ -6,7 +6,7 @@
 import { Request } from 'express';
 import { User } from 'ngrx-quiz-common';
 import { sign, verify, VerifyErrors } from 'jsonwebtoken';
-import { JWT_SECRET_KEY } from '../consts/consts';
+import { JWT_SECRET_KEY, JWT_TTL } from '../consts/consts';
 import { TokenData } from './token-data';
 import { ApiError } from '../api/api-error';
 
@@ -28,7 +28,7 @@ export class TokenUtils {
             },
             JWT_SECRET_KEY,
             {
-                expiresIn: '1m'
+                expiresIn: JWT_TTL
             }
         );
     }

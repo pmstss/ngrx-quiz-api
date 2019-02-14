@@ -6,6 +6,7 @@
 export const SERVER_PORT = process.env.PORT || 4242;
 export const COMMENTS_PER_PAGE = 10;
 export const SALT_ROUNDS = 3;
+export const JWT_TTL = '30m';
 
 let corsOrigin = process.env.CORS_ORIGIN;
 if (!corsOrigin) {
