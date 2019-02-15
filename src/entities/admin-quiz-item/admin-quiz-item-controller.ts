@@ -31,6 +31,6 @@ export class AdminQuizItemController {
 
     updateQuizItemsOrder(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
         return writeResponse(
-            this.repo.updateQuizItemsOrder(req.params.quizId, req.body.itemIds), req , res, next);
+            this.repo.updateQuizItemsOrder(req.params.quizId, req.body.itemIdUp, req.body.itemIdDown), req , res, next);
     }
 }

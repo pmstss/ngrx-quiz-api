@@ -12,7 +12,7 @@ export interface QuizItemDoc {
     randomizeChoices: boolean;
     singleChoice: boolean;
     choices: QuizItemChoiceDoc[];
-    order: number;
+    order?: number;
     counter: number;
 }
 
@@ -44,7 +44,7 @@ export const QuizItemSchema = new mongoose.Schema(
         order: {
             type: mongoose.Schema.Types.Number,
             required: true,
-            default: 0,
+            default: Math.round(Number.MAX_SAFE_INTEGER / 2),
             select: false
         },
         counter: {

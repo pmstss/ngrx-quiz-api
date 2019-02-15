@@ -49,8 +49,7 @@ export class AdminQuizItemRepo {
             choices: item.choices,
             singleChoice: item.singleChoice,
             randomizeChoices: item.randomizeChoices,
-            counter: 0,
-            order: 100
+            counter: 0
         }).then((doc: QuizItemMongooseDoc) => this.getItem(doc._id));
     }
 
@@ -86,17 +85,17 @@ export class AdminQuizItemRepo {
         });
     }
 
-    updateQuizItemsOrder(quizId: string, itemIds: string[]): Promise<void> {
+    updateQuizItemsOrder(quizId: string, itemIdUp: string, itemIdDown: string): Promise<void> {
         // TODO ### is it possible to perform in single query?
-        return Promise.all(itemIds.map((itemId, idx) => {
+        return Promise.all([itemIdUp, itemIdDown].map((itemId, idx) => {
             return QuizItemModel.update(
                 {
                     _id: mongoose.Types.ObjectId(itemId),
                     quizId: mongoose.Types.ObjectId(quizId)
                 },
                 {
-                    $set: {
-                        order: idx
+                    $inc: {
+                        order: idx === 0 ? -1 : 1
                     }
                 }
             ).exec();
