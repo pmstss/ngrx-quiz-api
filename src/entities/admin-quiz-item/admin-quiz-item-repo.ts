@@ -101,7 +101,7 @@ export class AdminQuizItemRepo {
             ).exec();
         })).then((res: UpdateResult[]) => {
             if (!res.every((r: UpdateResult) => !!r.ok)) {
-                throw new ApiError('Order update error', 501);
+                throw new ApiError('Items order update error', 409);
             }
         });
     }
