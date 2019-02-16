@@ -21,8 +21,10 @@ export class QuizController {
                 (quizes: (QuizMetaBasic & {totalQuestions: number})[]): QuizMetaListItem[] =>
                 quizes.map((quiz: (QuizMetaBasic & {totalQuestions: number})): QuizMetaListItem => ({
                     ...quiz,
-                    started: req.stateService.isStarted(quiz.id),
-                    finished: req.stateService.isFinished(quiz.id)
+                    started: req.stateService && req.stateService.hasQuizState(quiz.id) &&
+                            req.stateService.isStarted(quiz.id),
+                    finished: req.stateService && req.stateService.hasQuizState(quiz.id) &&
+                            req.stateService.isFinished(quiz.id)
                 }))
             ),
             req, res, next
