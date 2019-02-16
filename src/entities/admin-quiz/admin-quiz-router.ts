@@ -13,6 +13,7 @@ const router = Router();
 router.get('/', controller.getQuizList.bind(controller));
 router.post('/', controller.createQuiz.bind(controller));
 router.get('/:quizId', controller.getQuiz.bind(controller));
+router.put('/order', controller.updateQuizOrder.bind(controller));
 router.put('/:quizId', controller.updateQuiz.bind(controller));
 router.delete('/:quizId', controller.deleteQuiz.bind(controller));
 router.post('/publish/:quizId', controller.publishQuiz.bind(controller));

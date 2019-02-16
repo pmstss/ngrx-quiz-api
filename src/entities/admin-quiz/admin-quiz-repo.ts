@@ -6,7 +6,7 @@
 import * as mongoose from 'mongoose';
 import { QuizMetaAdmin, QuizMetaBasic, User, QuizMetaListItem } from 'ngrx-quiz-common';
 import { ApiError } from '../../api/api-error';
-import { DeleteResult } from '../mongo-types';
+import { DeleteResult, UpdateResult } from '../mongo-types';
 import { QuizModel, QuizDoc, QuizMongooseDoc } from '../quiz/quiz-model';
 import { QuizItemModel } from '../quiz-item/quiz-item-model';
 
@@ -32,6 +32,10 @@ export class AdminQuizRepo {
             .addFields({
                 id: '$_id',
                 totalQuestions: { $size: '$items' }
+            })
+            .sort({
+                order: 1,
+                dateUpdated: -1
             })
             .project({
                 _id: 0,
@@ -99,7 +103,7 @@ export class AdminQuizRepo {
             })
             // sorting by items order
             .unwind({ path: '$items', preserveNullAndEmptyArrays: true })
-            .sort({ 'items.order': 1, 'items.updatedAt': 1 })
+            .sort({ 'items.order': 1, 'items.updatedAt': -1 })
             .group({
                 _id: '$_id',
                 items: {
@@ -175,6 +179,27 @@ export class AdminQuizRepo {
             }
         ).exec()
         .then(() => this.getQuiz(quizId, user));
+    }
+
+    updateQuizOrder(quizIdUp: string, quizIdDown: string): Promise<void> {
+        console.log('### repo', quizIdUp, quizIdDown);
+        // TODO ### is it possible to perform in single query?
+        return Promise.all([quizIdUp, quizIdDown].map((quizId, idx) => {
+            return QuizModel.update(
+                {
+                    _id: mongoose.Types.ObjectId(quizId)
+                },
+                {
+                    $inc: {
+                        order: idx === 0 ? -1 : 1
+                    }
+                }
+            ).exec();
+        })).then((res: UpdateResult[]) => {
+            if (!res.every((r: UpdateResult) => !!r.ok)) {
+                throw new ApiError('Quiz order update error', 409);
+            }
+        });
     }
 
     publishQuiz(quizId: string, user: User): Promise<boolean> {

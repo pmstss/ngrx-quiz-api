@@ -39,6 +39,12 @@ export class AdminQuizController {
         );
     }
 
+    updateQuizOrder(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
+        console.log(req.body, req.body.quizIdUp, req.body.quizIdDown);
+        return writeResponse(
+            this.repo.updateQuizOrder(req.body.quizIdUp, req.body.quizIdDown), req , res, next);
+    }
+
     deleteQuiz(req: ApiRequest, res: Response, next: NextFunction): Promise<void> {
         return writeResponse(this.repo.deleteQuiz(req.params.quizId, req.tokenData.user), req , res, next);
     }

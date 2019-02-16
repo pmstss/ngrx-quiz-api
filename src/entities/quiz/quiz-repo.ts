@@ -25,6 +25,10 @@ export class QuizRepo {
                 id: '$_id',
                 totalQuestions: { $size: '$items' }
             })
+            .sort({
+                order: 1,
+                dateUpdated: -1
+            })
             .project({
                 _id: 0,
                 __v: 0,

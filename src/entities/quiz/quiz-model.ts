@@ -11,6 +11,7 @@ export interface QuizDoc {
     description: string;
     descriptionFull: string;
     randomizeItems: boolean;
+    order?: number;
     userId: string;
     published: boolean;
     public: boolean;
@@ -52,6 +53,11 @@ export const QuizSchema = new mongoose.Schema(
         randomizeItems: {
             type: mongoose.SchemaTypes.Boolean,
             required: true
+        },
+        order: {
+            type: mongoose.SchemaTypes.Number,
+            required: true,
+            default: Math.round(Number.MAX_SAFE_INTEGER / 2)
         },
         userId: {
             type: mongoose.SchemaTypes.ObjectId,
